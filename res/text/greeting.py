@@ -15,6 +15,11 @@ class Greet():
                 self.event.reply_token,
                 TextSendMessage(text="Apa cuy???")
             )
+        elif "@all" in self.event.message.text:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(text="who are you calling?")
+            )
         else:
             self.line_bot_api.reply_message(
                 self.event.reply_token,
