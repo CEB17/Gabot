@@ -35,7 +35,7 @@ class Greet():
             elif i == 6:
                 msg = "'sup?"
             elif i == 7:
-                msg = "Haihai"
+                msg = "Iya?"
             elif i == 8:
                 msg = "dalem?"
             elif i == 9:
@@ -43,7 +43,7 @@ class Greet():
             
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                TextSendMessage(text=msg)
+                TextSendMessage(text=msg+"\n"+self.event.source.userId)
             )
         else:
             self.line_bot_api.reply_message(

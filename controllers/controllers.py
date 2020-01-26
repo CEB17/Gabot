@@ -2,10 +2,9 @@ from flask import request, abort
 from linebot.exceptions import (
     InvalidSignatureError
 )
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-)
-from event import (message)
+from linebot.models import (MessageEvent, JoinEvent,
+    MemberJoinedEvent, MemberLeftEvent, UnfollowEvent, FollowEvent)
+from event import (message,join)
 
 def index():
     return "<h1> Apa? </h1>"
@@ -27,5 +26,7 @@ def handler(app,parser,line_bot_api):
     for event in events:
         if isinstance(event, MessageEvent):
             message.MessageHandler(event, line_bot_api)
+        elif isinstance(event, JoinEvent):
+            join.JoinHandler(event, line_bot_api)
 
     return 'OK'
