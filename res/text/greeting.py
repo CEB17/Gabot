@@ -12,9 +12,9 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        hi = "(([Hh][ie]|[OoUu]+[IiYy]+[t]*|[Dd]ude|[Mm]ate)\s?)"
+        hi = "(([Hh]+[ie]+|[OoUu]+[IiYy]+[t]*)[!]*\s?)"
         pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro|[Pp]+)[!]*)"
-        pattern = hi + '|' + hi + '?' + pattern
+        pattern = '^' + hi + '$' +'|' + hi + '?' + pattern + '$' + '|' + '^' + pattern + '$'
         if self.botname in self.event.message.text:
             pattern = self.botname + '\s' + '(' + pattern + ')'
 
