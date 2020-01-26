@@ -5,10 +5,12 @@ from res.text import *
 
 class MessageHandler():
     def __init__(self, event, line_bot_api):
+        botname = os.getenv('BOTNAME', None)
+
         if isinstance(event.message, TextMessage):
             if event.source.type == "group":
                 if "@Gabot" in event.message.text:
-                    Greet(event, line_bot_api)
+                    Greet(event, line_bot_api, botname)
 
                 elif "@all" in event.message.text:
                     line_bot_api.reply_message(
@@ -17,4 +19,4 @@ class MessageHandler():
                     )
             
             elif event.source.type == "user":
-                Greet(event, line_bot_api)
+                Greet(event, line_bot_api, botname)

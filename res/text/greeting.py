@@ -1,18 +1,23 @@
 from linebot.models import (
     TextSendMessage,
 )
-import re,random
+import re,random,os
 
 class Greet():
-    def __init__(self, event, line_bot_api):
+    def __init__(self, event, line_bot_api, botname):
         self.event = event
         self.line_bot_api = line_bot_api
-        
+        self.botname = botname
+
         self.greeting()
 
     def greeting(self):
         hi = "(([Hh][ie]|[OoUu]+[IiYy]+[t]*|[Dd]ude|[Mm]ate)\s?)"
-        pattern = "([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro)[!]*"
+        pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro)[!]*)"
+        pattern = hi + '|' + hi + '?' + pattern
+        if self.botname in self.event.message.text:
+            pattern = self.botname + '\s' + '(' + pattern + ')'
+
         if re.match(pattern, self.event.message.text):
             i = random.randrange(10)
             if i == 0:
