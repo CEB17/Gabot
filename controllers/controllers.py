@@ -25,8 +25,7 @@ def handler(app,parser,line_bot_api):
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
-        if not isinstance(event, MessageEvent):
-            continue
-        message.MessageHandler(event, line_bot_api)
+        if isinstance(event, MessageEvent):
+            message.MessageHandler(event, line_bot_api)
 
     return 'OK'
