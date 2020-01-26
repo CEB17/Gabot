@@ -25,13 +25,14 @@ def handler(app,parser,line_bot_api):
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if not isinstance(event, MessageEvent):
+            print("messageEvent")
             continue
         if not isinstance(event.message, TextMessage):
+            print("TextMessage")
             continue
 
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=event.message.text)
         )
-    print("sup")
     return 'OK'
