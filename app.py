@@ -3,7 +3,7 @@ from __future__ import unicode_literals #backward compatibility for python2
 import os, sys
 
 from flask import Flask, request, abort
-from router import router
+from router.router import *
 
 from linebot import (
     LineBotApi, WebhookParser
@@ -34,7 +34,7 @@ line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
 #Router
-router.router(app, parser, line_bot_api)
+router(app, parser, line_bot_api)
 
 #Main
 if __name__ == "__main__":

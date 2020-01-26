@@ -5,6 +5,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+from event import (message)
 
 def index():
     return "<h1> Apa? </h1>"
@@ -26,16 +27,6 @@ def handler(app,parser,line_bot_api):
     for event in events:
         if not isinstance(event, MessageEvent):
             continue
-        if not isinstance(event.message, TextMessage):
-            continue
-        if event.message.text == "Cuy!":
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="Apa cuy???")
-            )
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=event.message.text)
-            )
+        message.MessageHandler(event, line_bot_api)
+
     return 'OK'
