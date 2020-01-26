@@ -40,10 +40,10 @@ class Greet():
                 msg = "dalem?"
             elif i == 9:
                 msg = "napa?"
-            
+            print(self.event.source)
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                TextSendMessage(text=msg+"\n"+self.event.source.userId)
+                TextSendMessage(text=msg)
             )
         else:
             self.line_bot_api.reply_message(
