@@ -46,7 +46,7 @@ class Greet():
                 TextSendMessage(text=msg)
             )
         else:
-            self.line_bot_api.push_message(
-                "Ue405c2b74b6d9b28e7362d650a3f18d9",
-                TextSendMessage(text="Dude, it's serious.")
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(text=self.event.message.text)
             )
