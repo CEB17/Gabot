@@ -13,7 +13,7 @@ class Greet():
 
     def greeting(self):
         hi = "(([Hh][ie]|[OoUu]+[IiYy]+[t]*|[Dd]ude|[Mm]ate)\s?)"
-        pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro)[!]*)"
+        pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro|[Pp]+)[!]*)"
         pattern = hi + '|' + hi + '?' + pattern
         if self.botname in self.event.message.text:
             pattern = self.botname + '\s' + '(' + pattern + ')'
