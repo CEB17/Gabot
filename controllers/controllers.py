@@ -24,8 +24,8 @@ def handler(app,parser,line_bot_api):
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
+        print("messageEvent")
         if not isinstance(event, MessageEvent):
-            print("messageEvent")
             continue
         if not isinstance(event.message, TextMessage):
             print("TextMessage")
