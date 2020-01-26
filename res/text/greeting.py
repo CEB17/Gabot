@@ -12,7 +12,7 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        hi = "(([Hh]+[ie]+|[OoUu]+[IiYy]+[t]*)[!]*\s?)"
+        hi = "(([Hh]+[a]*[ie]+|[OoUu]+[IiYy]+[t]*)[!]*\s?)"
         pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro|[Pp]+)[!]*)"
         pattern = '^' + hi + '$' +'|' + hi + '?' + pattern + '$' + '|' + '^' + pattern + '$'
         if self.botname in self.event.message.text:
@@ -40,7 +40,7 @@ class Greet():
                 msg = "dalem?"
             elif i == 9:
                 msg = "napa?"
-            print(self.event.source)
+            print(self.event)
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(text=msg)
