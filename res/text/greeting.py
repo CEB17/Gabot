@@ -42,7 +42,7 @@ class Greet():
                 msg = "napa?"
             print(self.event)
             self.line_bot_api.reply_message(
-                self.event.reply_token,
+                "cb8935f576f84882b2f589f184d2d326",
                 TextSendMessage(text=msg)
             )
         else:
