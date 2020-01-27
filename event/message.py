@@ -24,4 +24,4 @@ class MessageHandler():
                     )
             
             elif event.source.type == "user":
-                Greet(event, line_bot_api, botname)
+                Greet(event, line_bot_api)

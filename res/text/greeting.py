@@ -4,7 +4,7 @@ from linebot.models import (
 import re,random,os
 
 class Greet():
-    def __init__(self, event, line_bot_api, botname):
+    def __init__(self, event, line_bot_api, botname=None):
         self.event = event
         self.line_bot_api = line_bot_api
         self.botname = botname
@@ -12,11 +12,21 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        hi = "(([Hh]+[a]*[ie]+|[OoUu]+[IiYy]+[t]*)[!]*\s?)"
-        pattern = "(([Cc][Uu]+[Yy]+|[Dd]ude|[Mm]ate|[Bb][Oo][Tt]|[Bb]ro|[Pp]+)[!]*)"
-        pattern = '^' + hi + '$' +'|' + hi + '?' + pattern + '$' + '|' + '^' + pattern + '$'
-        if self.botname in self.event.message.text:
-            pattern = self.botname + '\s' + '(' + pattern + ')'
+        word = {
+            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh])",
+            "halo" : "(([Hh]+[Ee]+|[Hh]+[Aa]+)[Ll]+[Oo]+)",
+            "oi" : "(([Oo]+[Ii]+|[Oo]+[Yy]+)[Tt]*|[Uu]+[Yy]+|[Pp])",
+            "slang" : "([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo])"
+        }
+
+        pattern = ""
+        for regex in word.values():
+            pattern = pattern + '^' + regex + '$ |'
+        pattern = '(' + pattern + '(' + word["hi"] + '|' + word["halo"] + ')\s' + word["slang"] + ')[!]*'
+
+        if self.botname is not None:
+            if  self.botname in self.event.message.text:
+                pattern = '^' + self.botname + '\s' + pattern + '|' + pattern + '\s' + self.botname + '$'
 
         if re.match(pattern, self.event.message.text):
             i = random.randrange(10)
