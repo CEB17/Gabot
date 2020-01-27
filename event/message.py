@@ -19,10 +19,7 @@ class MessageHandler():
                     Greet(event, line_bot_api, botname)
 
                 elif "@all" in event.message.text:
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text="who are you calling?")
-                    )
-            
+                    Mention(event,line_bot_api)
+                    
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
