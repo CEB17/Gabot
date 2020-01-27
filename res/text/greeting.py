@@ -13,7 +13,7 @@ class Greet():
 
     def greeting(self):
         word = {
-            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh]|[Hh][Ee])",
+            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh]|[Hh][Ee][Yy]*)",
             "halo" : "(([Hh]+[Ee]+|[Hh]+[Aa]+)[Ll]+[Oo]+)",
             "oi" : "(([Oo]+[Ii]+|[Oo]+[Yy]+)[Tt]*|[Uu]+[Yy]+|[Pp])",
             "slang" : "(([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo]))"
@@ -58,7 +58,6 @@ class Greet():
                 msg = "dalem?"
             elif i == 9:
                 msg = "napa?"
-            print(self.event.source)
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(text=msg)

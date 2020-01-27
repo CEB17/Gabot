@@ -14,6 +14,7 @@ class MessageHandler():
 
         if isinstance(event.message, TextMessage):
             if event.source.type == "group":
+                print(event)
                 if "@Gabot" in event.message.text:
                     Greet(event, line_bot_api, botname)
 
