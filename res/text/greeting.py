@@ -20,7 +20,6 @@ class Greet():
         }
 
         pattern = ""
-        botname = "@Gabot"
         index = len(word)
         count = 1
         for regex in word.values():
@@ -29,10 +28,13 @@ class Greet():
                 break
             pattern = pattern + regex + '|'
             count = count + 1
-        pattern = '^(' + pattern + ')$|(' + '(' + word["hi"] + '|' + word["halo"] + ')\s' + word["slang"] + ')[!]*'
-        if self.botname is not None:
+        
+        pattern = '((' + pattern + ')|(' + '(' + word["hi"] + '|' + word["halo"] + ')\s' + word["slang"] + '))[!]*'
+        if self.botname is None:
+            pattern = '^' + pattern + '$'
+        else:
             if  self.botname in self.event.message.text:
-                pattern = botname + '\s(' + pattern + ')|(' + pattern + ')\s' + botname
+                pattern = self.botname + '\s(' + pattern + ')|(' + pattern + ')\s' + self.botname
 
         if re.match(pattern, self.event.message.text):
             i = random.randrange(10)
