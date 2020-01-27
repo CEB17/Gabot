@@ -13,20 +13,26 @@ class Greet():
 
     def greeting(self):
         word = {
-            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh])",
+            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh]|[Hh][Ee])",
             "halo" : "(([Hh]+[Ee]+|[Hh]+[Aa]+)[Ll]+[Oo]+)",
             "oi" : "(([Oo]+[Ii]+|[Oo]+[Yy]+)[Tt]*|[Uu]+[Yy]+|[Pp])",
-            "slang" : "([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo])"
+            "slang" : "(([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo]))"
         }
 
         pattern = ""
+        botname = "@Gabot"
+        index = len(word)
+        count = 1
         for regex in word.values():
-            pattern = pattern + '^' + regex + '$ |'
-        pattern = '(' + pattern + '(' + word["hi"] + '|' + word["halo"] + ')\s' + word["slang"] + ')[!]*'
-
+            if count == index:
+                pattern = pattern + regex
+                break
+            pattern = pattern + regex + '|'
+            count = count + 1
+        pattern = '^(' + pattern + ')$|(' + '(' + word["hi"] + '|' + word["halo"] + ')\s' + word["slang"] + ')[!]*'
         if self.botname is not None:
             if  self.botname in self.event.message.text:
-                pattern = '^' + self.botname + '\s' + pattern + '|' + pattern + '\s' + self.botname + '$'
+                pattern = botname + '\s(' + pattern + ')|(' + pattern + ')\s' + botname
 
         if re.match(pattern, self.event.message.text):
             i = random.randrange(10)
