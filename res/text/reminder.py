@@ -36,7 +36,8 @@ class Reminder():
                             initial=now
                         ),
                         MessageAction(
-                            label="Hi dude"
+                            label="Hi dude",
+                            text="Hi dude"
                         )
 
                     ]
