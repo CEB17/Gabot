@@ -30,7 +30,7 @@ class Reminder():
                             label="date",
                             data="time=7",
                             mode="datetime",
-                            initial="2020-02-2t00:00"
+                            initial="2020-02-02t00:00"
                         )
 
                     ]
