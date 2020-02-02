@@ -22,3 +22,4 @@ class MessageHandler():
 
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
+                Reminder(event, line_bot_api)
