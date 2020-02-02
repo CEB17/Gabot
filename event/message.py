@@ -19,6 +19,7 @@ class MessageHandler():
 
                 elif "@all" in event.message.text:
                     Mention(event,line_bot_api)
+                Reminder(event, line_bot_api)
 
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
