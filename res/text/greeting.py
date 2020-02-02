@@ -12,7 +12,7 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        with open('/JSON/greeting.json', 'r') as obj:
+        with open('JSON/greeting.json', 'r') as obj:
             word = json.load(obj)
 
         pattern = ""
