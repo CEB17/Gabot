@@ -1,12 +1,14 @@
 from linebot.models import (
     TemplateSendMessage,
-    ConfirmTemplate,
+    ButtonsTemplate,
     MessageAction,
     URIAction,
     PostbackAction,
     DatetimePickerAction
 )
 from time import sleep
+from datetime import datetime
+import pytz
 
 class Reminder():
     def __init__(self,event,line_bot_api):
@@ -17,25 +19,30 @@ class Reminder():
 
     def prompt(self):
         if self.event.message.text == "remind me":
+            timezone = pytz.timezone("Asia/Jakarta")
+            now = datetime.now(timezone)
+            now = now.strftime("%Y-%m-%dt00:00")
+
             msg = TemplateSendMessage(
                 alt_text="when?",
-                template=ConfirmTemplate(
-                    text="Alright, when?",
+                template=ButtonsTemplate(
+                    title="Alright, when?",
+                    text="You can set reminder by date n hours",
                     actions=[
-                        URIAction(
-                            label="medium",
-                            uri="https://medium.com/"
-                        ),
                         DatetimePickerAction(
                             label="date",
-                            data="time=7",
+                            data="action=reminder",
                             mode="datetime",
-                            initial="2020-02-02t00:00"
+                            initial=now
+                        ),
+                        MessageAction(
+                            label="Hi dude"
                         )
 
                     ]
                 )
             )
+
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 msg
