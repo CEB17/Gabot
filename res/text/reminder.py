@@ -3,7 +3,8 @@ from linebot.models import (
     ConfirmTemplate,
     MessageAction,
     URIAction,
-    PostbackAction
+    PostbackAction,
+    DatetimePickerAction
 )
 from time import sleep
 
@@ -27,9 +28,19 @@ class Reminder():
                         ),
                         PostbackAction(
                             label="postback",
-                            display_text="postback text",
                             data="action=buy"
+                        ),
+                        URIAction(
+                            label="Google",
+                            uri="https://Google.com/"
+                        ),
+                        DatetimePickerAction(
+                            label="date",
+                            data="time=7",
+                            mode="datetime",
+                            initial="2020-02-2t00:00"
                         )
+
                     ]
                 )
             )
