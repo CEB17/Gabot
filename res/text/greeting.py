@@ -1,7 +1,7 @@
 from linebot.models import (
     TextSendMessage,
 )
-import re,random,os,json
+import re,random,os
 
 class Greet():
     def __init__(self, event, line_bot_api, botname=None):
@@ -12,8 +12,12 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        with open('/static/JSON/greeting.json', 'r') as obj:
-            word = json.load(obj)
+        word = {
+            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh]|[Hh][Ee][Yy]*)",
+            "halo" : "(([Hh]+[Ee]+|[Hh]+[Aa]+)[Ll]+[Oo]+)",
+            "oi" : "(([Oo]+[Ii]+|[Oo]+[Yy]+)[Tt]*|[Uu]+[Yy]+|[Pp])",
+            "slang" : "(([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo]))"
+        }
 
         pattern = ""
         index = len(word)
