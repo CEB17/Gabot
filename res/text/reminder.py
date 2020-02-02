@@ -1,7 +1,9 @@
 from linebot.models import (
     TemplateSendMessage,
     ConfirmTemplate,
-    MessageAction
+    MessageAction,
+    URIAction,
+    PostbackAction
 )
 from time import sleep
 
@@ -19,13 +21,14 @@ class Reminder():
                 template=ConfirmTemplate(
                     text="Alright, when?",
                     actions=[
-                        MessageAction(
-                            label="later",
-                            text="later"
+                        URIAction(
+                            label="medium",
+                            uri="https://medium.com/"
                         ),
-                        MessageAction(
-                            label="Duh",
-                            text="Duh"
+                        PostbackAction(
+                            label="postback",
+                            display_text="postback text",
+                            data="action=buy"
                         )
                     ]
                 )
