@@ -26,14 +26,6 @@ class Reminder():
                             label="medium",
                             uri="https://medium.com/"
                         ),
-                        PostbackAction(
-                            label="postback",
-                            data="action=buy"
-                        ),
-                        URIAction(
-                            label="Google",
-                            uri="https://Google.com/"
-                        ),
                         DatetimePickerAction(
                             label="date",
                             data="time=7",
