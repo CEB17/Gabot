@@ -26,6 +26,8 @@ class Reminder():
             msg = TemplateSendMessage(
                 alt_text="when?",
                 template=ButtonsTemplate(
+                    thumbnail_image_url="https://image.flaticon.com/teams/slug/freepik.jpg",
+                    image_background_color="#00e676",
                     title="Alright, when?",
                     text="You can set reminder by date n hours",
                     actions=[
@@ -34,12 +36,7 @@ class Reminder():
                             data="action=reminder",
                             mode="datetime",
                             initial=now
-                        ),
-                        MessageAction(
-                            label="Hi dude",
-                            text="Hi dude"
                         )
-
                     ]
                 )
             )
