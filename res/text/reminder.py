@@ -1,5 +1,7 @@
 from linebot.models import (
-    TextSendMessage,
+    TemplateSendMessage,
+    ConfirmTemplate,
+    MessageAction
 )
 from time import sleep
 
@@ -8,21 +10,28 @@ class Reminder():
         self.event = event
         self.line_bot_api = line_bot_api
 
-        self.setReminder()
+        self.prompt()
 
-    def setReminder(self):
+    def prompt(self):
         if self.event.message.text == "remind me":
+            msg = TemplateSendMessage(
+                alt_text="when?",
+                template=ConfirmTemplate(
+                    text="Alright, when?",
+                    actions=[
+                        MessageAction(
+                            label="later",
+                            text="later"
+                        ),
+                        MessageAction(
+                            label="Duh",
+                            text="Duh"
+                        )
+                    ]
+                )
+            )
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                TextSendMessage("Alright, when?")
+                msg
             )
-            while True:
-                if self.event.message.text == "later":
-                    sleep(3)
-                    self.line_bot_api.reply_message(
-                        self.event.reply_token,
-                        TextSendMessage("Hey, Just want to remind you")
-                    )
-                    break
-
 
