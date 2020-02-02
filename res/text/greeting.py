@@ -1,7 +1,7 @@
 from linebot.models import (
     TextSendMessage,
 )
-import re,random,os
+import re,random,os,json
 
 class Greet():
     def __init__(self, event, line_bot_api, botname=None):
@@ -12,12 +12,8 @@ class Greet():
         self.greeting()
 
     def greeting(self):
-        word = {
-            "hi" : "(([Hh]+[Aa]*|[Hh]+[Ee]*)[Ii]+|[Ee][Hh]|[Hh][Ee][Yy]*)",
-            "halo" : "(([Hh]+[Ee]+|[Hh]+[Aa]+)[Ll]+[Oo]+)",
-            "oi" : "(([Oo]+[Ii]+|[Oo]+[Yy]+)[Tt]*|[Uu]+[Yy]+|[Pp])",
-            "slang" : "(([Cc]+[Uu]+[Yy]+)|([Dd][Uu]+[Dd][Ee])|([Mm][Aa][Tt][Ee])|([Bb][Oo][Tt])|([Bb][Rr][Oo]))"
-        }
+        with open('../../static/JSON/greeting.json', 'r') as obj:
+            word = json.load(obj)
 
         pattern = ""
         index = len(word)
@@ -37,30 +33,23 @@ class Greet():
                 pattern = self.botname + '\s(' + pattern + ')|(' + pattern + ')\s' + self.botname
 
         if re.match(pattern, self.event.message.text):
-            i = random.randrange(10)
-            if i == 0:
-                msg = "Apa?"
-            elif i == 1:
-                msg = "Hm??"
-            elif i == 2:
-                msg = "Oit"
-            elif i == 3:
-                msg = '??'
-            elif i == 4:
-                msg = "ha?"
-            elif i == 5:
-                msg = "wut?"
-            elif i == 6:
-                msg = "'sup?"
-            elif i == 7:
-                msg = "Iya?"
-            elif i == 8:
-                msg = "dalem?"
-            elif i == 9:
-                msg = "napa?"
+            msg = [
+                "Apa?",
+                "Hm??",
+                "Oit",
+                "??",
+                "ha?",
+                "wut?",
+                "'sup?",
+                "Iya?",
+                "dalem?",
+                "napa?"
+            ]
+
+            i = random.randrange(len(msg))
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                TextSendMessage(text=msg)
+                TextSendMessage(text=msg[i])
             )
         else:
             self.line_bot_api.reply_message(

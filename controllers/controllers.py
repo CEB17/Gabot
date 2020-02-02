@@ -5,7 +5,9 @@ from linebot.exceptions import (
 from linebot.models import (MessageEvent, JoinEvent,
     MemberJoinedEvent, MemberLeftEvent, UnfollowEvent, FollowEvent)
 from event import (message,join)
+from time import sleep
 import logging
+import threading
 
 def index():
     return "<h1> Apa? </h1>"
@@ -24,12 +26,16 @@ def handler(app,parser,line_bot_api):
     except InvalidSignatureError:
         abort(400)
 
-    # if event is MessageEvent and message is TextMessage, then echo text
+    sleep(0.01)
+    thread = threading.Thread(target=eventHandler, args=[events,line_bot_api])
+    thread.start()
+
+    return 'OK'
+
+def eventHandler(events, line_bot_api):
     for event in events:
         logging.debug(event)
         if isinstance(event, MessageEvent):
             message.MessageHandler(event, line_bot_api)
         elif isinstance(event, JoinEvent):
             join.JoinHandler(event, line_bot_api)
-
-    return 'OK'
