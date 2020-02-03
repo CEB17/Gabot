@@ -3,52 +3,47 @@ from linebot.models import (
     TemplateSendMessage,
     ConfirmTemplate,
     PostbackAction,
-    MessageAction
+    MessageAction,
+    DatetimePickerAction
 )
 from time import sleep
 from datetime import datetime
 import pytz, re
-from controllers.db import *
 
 class Reminder():
     def __init__(self,event,line_bot_api):
         self.event = event
         self.line_bot_api = line_bot_api
+        region = pytz.timezone("Asia/Jakarta")
+        self.now = datetime.now(region)
+        self.now = self.now.strftime("%Y-%m-%dt%H:%M")
+
+        length = len(self.event.message.text)
+        maxchar = 260
+        if length > maxchar:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    text=f"Uh, sorry. You have {length} characters,\
+                        I couldn't receive more than {maxchar} characters."
+                )
+            )
+            return
 
         if re.match(".*#[Rr]eminder.*", self.event.message.text):
             if re.match(".*#[Ee]vent.*", self.event.message.text):
                 self.addEvent()
 
     def addEvent(self):
-        time = re.split(".*{", self.event.message.text)
-        if len(time) != 2:
-            self.line_bot_api.reply_message(
-                self.event.reply_token,
-                TextSendMessage(
-                    text="Sorry I couldn't get the time.\
-                    You need to format it in {dd/mm/yyyyThh:mm} \
-                    ex: held party on {12/12/2012T12:12}"
-                )
-            )
-            return
-        if time[0] is '':
-            time = time[1]
-        elif time[1] is '':
-            time = time[0]
-        datetime = re.split("[Tt]", time)
-        print("datetime is", datetime)
-        date = datetime[0][1:]
-        time = datetime[1][:5]
-
         prompt = TemplateSendMessage(
-            alt_text="Are you sure?",
+            alt_text="Please choose when will it be held",
             template=ConfirmTemplate(
-                text=f"Your event would be held on {date} at {time}",
+                text=f"Please choose when will it be held",
                 actions=[
-                    PostbackAction(
-                        label="Yes",
-                        data=f"action=reminder&text={self.event.message.text}",
-                        display_text="Wokay, I'll remember it",
+                    DatetimePickerAction(
+                        label="Set date",
+                        data=f"action=set-reminder&type=event&text={self.event.message.text}",
+                        mode="datetime",initial=self.now
                     ),
                     MessageAction(
                         label="Forget it",
@@ -62,4 +57,3 @@ class Reminder():
             self.event.reply_token,
             prompt            
         )
-            
