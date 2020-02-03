@@ -1,1 +1,0 @@
-from res.postback.reminder_setup import *

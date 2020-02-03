@@ -7,7 +7,7 @@ from linebot.models import (
     MemberJoinedEvent, MemberLeftEvent,
     UnfollowEvent, FollowEvent,PostbackEvent
     )
-from event import (message,join,postback)
+from event import (message,join)
 from time import sleep
 import logging
 import threading
@@ -42,6 +42,3 @@ def eventHandler(app, events, line_bot_api):
             message.MessageHandler(event, line_bot_api)
         elif isinstance(event, JoinEvent):
             join.JoinHandler(event, line_bot_api)
-        elif isinstance(event, PostbackEvent):
-            with app.test_request_context():
-                postback.PostbackHandler(event, line_bot_api)

@@ -1,53 +1,50 @@
 from linebot.models import (
+    TextSendMessage,
     TemplateSendMessage,
-    ButtonsTemplate,
-    MessageAction,
-    URIAction,
+    ConfirmTemplate,
     PostbackAction,
-    DatetimePickerAction,
+    MessageAction
 )
 from time import sleep
 from datetime import datetime
 import pytz, re
+from controllers.db import *
 
 class Reminder():
     def __init__(self,event,line_bot_api):
         self.event = event
         self.line_bot_api = line_bot_api
 
-        self.prompt()
+        if re.match(".*#[Rr]eminder.*", self.event.message.text):
+            if re.match(".*#[Ee]vent.*", self.event.message.text):
+                self.addEvent()
 
-    def prompt(self):
-        if re.match("[Ss]et\sreminder || [Rr]emind\sme", self.event.message.text):
-            timezone = pytz.timezone("Asia/Jakarta")
-            now = datetime.now(timezone)
-            now = now.strftime("%Y-%m-%dt00:00")
+    def addEvent(self):
+        time = re.split("{}", self.event.message.text)
+        datetime = re.split("[Tt]", time)
+        date = datetime[0][1:]
+        time = datetime[1][:5]
 
-            msg = TemplateSendMessage(
-                alt_text="What is it about?",
-                template=ButtonsTemplate(
-                    thumbnail_image_url="https://image.flaticon.com/teams/slug/freepik.jpg",
-                    title="Tell me what is it about?",
-                    text="Choose what kind of reminder you are going to set",
-                    actions=[
-                        PostbackAction(
-                            label="Event",
-                            data="action=set-reminder&type=event"
-                            ),
-                        PostbackAction(
-                            label="Assignment",
-                            data="action=set-reminder&type=assignment"
-                        ),
-                        PostbackAction(
-                            label="Something else",
-                            data="action=set-reminder&type=something"
-                        )
-                    ]
-                )
+        prompt = TemplateSendMessage(
+            alt_text="Are you sure?",
+            template=ConfirmTemplate(
+                text=f"Your event would be held on {date} at {time}",
+                actions=[
+                    PostbackAction(
+                        label="Yes",
+                        data=f"action=reminder&text={self.event.message.text}",
+                        display_text="Wokay, I'll remember it",
+                    ),
+                    MessageAction(
+                        label="Forget it",
+                        text="Nah, forget it."
+                    )
+                ]
             )
+        )
 
-            self.line_bot_api.reply_message(
-                self.event.reply_token,
-                msg
-            )
-
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            prompt            
+        )
+            
