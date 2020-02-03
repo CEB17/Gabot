@@ -4,12 +4,10 @@ from linebot.models import (
 )
 
 class SetReminder():
-    def __init__(self, request, event, line_bot_api):
+    def __init__(self, query, event, line_bot_api):
+        self.event = event
         self.line_bot_api = line_bot_api
-        print("Query is",request.args)
-
-        if request.args['action'] == "set-reminder":
-            self.addEvent()
+        self.addEvent()
 
     def addEvent(self):
         print('oi')
