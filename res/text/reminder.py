@@ -31,9 +31,10 @@ class Reminder():
                 )
             )
             return
-        time = time[0]
         if time[0] is '':
             time = time[1]
+        elif time[1] is '':
+            time = time[0]
         datetime = re.split("[Tt]", time)
         print("datetime is", datetime)
         date = datetime[0][1:]
