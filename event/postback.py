@@ -32,8 +32,8 @@ class PostbackHandler():
         mongo = db.reminder
         mongo.insert_one(data)
 
-        self.line_bot_api.reply_message(
-            self.event.reply_token,
+        self.line_bot_api.push_message(
+            self.event.source.userId,
             TextSendMessage(
                 text="Reminder has been set"
             )
