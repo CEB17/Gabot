@@ -44,4 +44,4 @@ def eventHandler(app, events, line_bot_api):
             join.JoinHandler(event, line_bot_api)
         elif isinstance(event, PostbackEvent):
             with app.test_request_context():
-                postback.PostbackHandler(event, line_bot_api)
+                postback.PostbackHandler(request, event, line_bot_api)
