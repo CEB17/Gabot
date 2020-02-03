@@ -2,9 +2,12 @@ from flask import request, abort
 from linebot.exceptions import (
     InvalidSignatureError
 )
-from linebot.models import (MessageEvent, JoinEvent,
-    MemberJoinedEvent, MemberLeftEvent, UnfollowEvent, FollowEvent)
-from event import (message,join)
+from linebot.models import (
+    MessageEvent, JoinEvent,
+    MemberJoinedEvent, MemberLeftEvent,
+    UnfollowEvent, FollowEvent,PostbackEvent
+    )
+from event import (message,join,postback)
 from time import sleep
 import logging
 import threading
@@ -39,3 +42,5 @@ def eventHandler(events, line_bot_api):
             message.MessageHandler(event, line_bot_api)
         elif isinstance(event, JoinEvent):
             join.JoinHandler(event, line_bot_api)
+        elif isinstance(event, PostbackEvent):
+            postback.PostbackHandler(event, line_bot_api)

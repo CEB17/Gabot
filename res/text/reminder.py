@@ -4,11 +4,11 @@ from linebot.models import (
     MessageAction,
     URIAction,
     PostbackAction,
-    DatetimePickerAction
+    DatetimePickerAction,
 )
 from time import sleep
 from datetime import datetime
-import pytz
+import pytz, re
 
 class Reminder():
     def __init__(self,event,line_bot_api):
@@ -18,24 +18,29 @@ class Reminder():
         self.prompt()
 
     def prompt(self):
-        if self.event.message.text == "remind me":
+        if re.match("[Ss]et\sreminder || [Rr]emind\sme", self.event.message.text):
             timezone = pytz.timezone("Asia/Jakarta")
             now = datetime.now(timezone)
             now = now.strftime("%Y-%m-%dt00:00")
 
             msg = TemplateSendMessage(
-                alt_text="when?",
+                alt_text="What is it about?",
                 template=ButtonsTemplate(
                     thumbnail_image_url="https://image.flaticon.com/teams/slug/freepik.jpg",
-                    image_background_color="#00e676",
-                    title="Alright, when?",
-                    text="You can set reminder by date n hours",
+                    title="Tell me what is it about?",
+                    text="Choose what kind of reminder you are going to set",
                     actions=[
-                        DatetimePickerAction(
-                            label="date",
-                            data="action=reminder",
-                            mode="datetime",
-                            initial=now
+                        PostbackAction(
+                            label="Event",
+                            data="action=set-reminder&type=event"
+                            ),
+                        PostbackAction(
+                            label="Assignment",
+                            data="action=set-reminder&type=assignment"
+                        ),
+                        PostbackAction(
+                            label="Something else",
+                            data="action=set-reminder&type=something"
                         )
                     ]
                 )
