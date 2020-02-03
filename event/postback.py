@@ -28,7 +28,7 @@ class PostbackHandler():
             "userId" : self.event.source.user_id,
             "source" : self.event.source.type,
             "type" : self.query['type'],
-            "datetime" : self.event.postback.params.datetime
+            "datetime" : self.event.postback.params.date_time
         }
 
         mongo = db.reminder
