@@ -19,14 +19,14 @@ class PostbackHandler():
         self.query = CIMultiDict(arr)
 
         print("source is", self.event.source)
-        print("userId", self.event.source['userId'])
+        print("userId", self.event.source.user_id)
 
         if self.query['action'] == "set-reminder":
             self.setReminder()
 
     def setReminder(self):
         data = {
-            "userId" : self.event.source['userId'],
+            "userId" : self.event.source.user_id,
             "source" : self.event.source.type,
             "type" : self.query['type'],
             "datetime" : self.event.postback.params.datetime
