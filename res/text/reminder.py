@@ -24,8 +24,7 @@ class Reminder():
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(
-                    text=f"Uh, sorry. You have {length} characters,\
-                        I couldn't receive more than {maxchar} characters."
+                    text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
                 )
             )
             return

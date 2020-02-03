@@ -42,5 +42,5 @@ def eventHandler(app, events, line_bot_api):
             message.MessageHandler(event, line_bot_api)
         elif isinstance(event, JoinEvent):
             join.JoinHandler(event, line_bot_api)
-        elif isinstance(event,line_bot_api):
+        elif isinstance(event, PostbackEvent):
             postback.PostbackHandler(event, line_bot_api)
