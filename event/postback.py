@@ -18,10 +18,6 @@ class PostbackHandler():
             arr.append(data.split('='))
         self.query = CIMultiDict(arr)
 
-        print("source is", self.event)
-        print("date is", self.event.postback.params['datetime'])
-        print("date is", self.event.postback.params['date_time'])
-
         if self.query['action'] == "set-reminder":
             self.setReminder()
 
@@ -30,7 +26,7 @@ class PostbackHandler():
             "userId" : self.event.source.user_id,
             "source" : self.event.source.type,
             "type" : self.query['type'],
-            "datetime" : self.event.postback.params.date_time
+            "datetime" : self.event.postback.params['datetime']
         }
 
         mongo = db.reminder
