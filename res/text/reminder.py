@@ -20,9 +20,21 @@ class Reminder():
                 self.addEvent()
 
     def addEvent(self):
-        time = re.split("{}", self.event.message.text)
-        print("time is",time)
-        datetime = re.split("[Tt]", time[0])
+        time = re.split(".*{", self.event.message.text)
+        if len(time) != 2:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    text="Sorry I couldn't get the time.\
+                    You need to format it in {dd/mm/yyyyThh:mm} \
+                    ex: held party on {12/12/2012T12:12}"
+                )
+            )
+            return
+        time = time[0]
+        if time[0] is '':
+            time = time[1]
+        datetime = re.split("[Tt]", time)
         print("datetime is", datetime)
         date = datetime[0][1:]
         time = datetime[1][:5]
