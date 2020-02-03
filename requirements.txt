@@ -4,3 +4,4 @@ gunicorn
 pytz
 multidict
 dnspython
+pymongo
