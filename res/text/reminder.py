@@ -21,7 +21,9 @@ class Reminder():
 
     def addEvent(self):
         time = re.split("{}", self.event.message.text)
+        print("time is",time)
         datetime = re.split("[Tt]", time[0])
+        print("datetime is", datetime)
         date = datetime[0][1:]
         time = datetime[1][:5]
 
