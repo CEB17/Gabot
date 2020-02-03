@@ -30,12 +30,12 @@ def handler(app,parser,line_bot_api):
         abort(400)
 
     sleep(0.01)
-    thread = threading.Thread(target=eventHandler, args=[events,line_bot_api])
+    thread = threading.Thread(target=eventHandler, args=[app, events,line_bot_api])
     thread.start()
 
     return 'OK'
 
-def eventHandler(events, line_bot_api):
+def eventHandler(app, events, line_bot_api):
     for event in events:
         logging.debug(event)
         if isinstance(event, MessageEvent):
@@ -43,4 +43,5 @@ def eventHandler(events, line_bot_api):
         elif isinstance(event, JoinEvent):
             join.JoinHandler(event, line_bot_api)
         elif isinstance(event, PostbackEvent):
-            postback.PostbackHandler(event, line_bot_api)
+            with app.test_request_context():
+                postback.PostbackHandler(event, line_bot_api)
