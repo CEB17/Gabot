@@ -18,8 +18,7 @@ class PostbackHandler():
             arr.append(data.split('='))
         self.query = CIMultiDict(arr)
 
-        print("source is", self.event.source)
-        print("userId", self.event.source.user_id)
+        print("source is", self.event)
 
         if self.query['action'] == "set-reminder":
             self.setReminder()
