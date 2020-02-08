@@ -25,15 +25,6 @@ class PostbackHandler():
             self.setReminder()
 
     def setReminder(self):
-        data = {
-            "userId" : self.event.source.user_id,
-            "source" : self.event.source.type,
-            "type" : self.query['type'],
-            "datetime" : self.event.postback.params['datetime'],
-        }
-
-        mongo = db.reminder
-        mongo.insert_one(data)
 
         t = self.event.postback.params['datetime'].split('T')
 
@@ -46,9 +37,16 @@ class PostbackHandler():
             ]
         )
 
+        if self.query['type'] == "event":
+            mongo = db.reminder
+            msg = mongo.find_one({"user":self.event.source.user_id, "datetime":"unset"},{"text"})
+            mongo.find_one_and_update({"user":self.event.source.user_id, "datetime":"unset"},
+            {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime']])
+        elif self.query['type'] == "todo":
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
 
-        thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
         thread.start()
 
     def sendReminder(self, user, message, time):
