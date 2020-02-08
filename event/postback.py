@@ -53,7 +53,9 @@ class PostbackHandler():
     def sendReminder(self, user, message, time):
         sleep(5)
         from datetime import datetime
-        now = datetime.now()
+        import pytz
+        asia = pytz.timezone('Asia/Jakarta')
+        now = datetime.now(asia)
         now = now.strftime("%Y-%m-%dT%H:%M")
         self.line_bot_api.push_message(
             self.event.source.user_id,
