@@ -39,12 +39,16 @@ class PostbackHandler():
             [
                 TextSendMessage(
                     text="Reminder has been set"
-                ),
-                TextSendMessage(
-                    text=self.query['text'],
-                    timeout=10
                 )
             ]
+        )
+
+        self.line_bot_api.push_message(
+            self.event.source.user_id,
+            TextSendMessage(
+                text=self.query['text'],
+                timeout=10
+            )
         )
 
         
