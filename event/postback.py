@@ -47,7 +47,7 @@ class PostbackHandler():
             self.event.source.user_id,
             TextSendMessage(
                 text=self.query['text'],
-                timeout=10
+                timeout=5000
             )
         )
 
