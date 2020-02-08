@@ -39,10 +39,10 @@ class PostbackHandler():
 
         if self.query['type'] == "event":
             mongo = db.reminder
-            mongo.find_one_and_update({"user":self.event.source.user_id, "datetime":"unset"},
-            {"$set" : {"datetime":self.event.postback.params['datetime']}})
+            print(mongo.find_one_and_update({"user":self.event.source.user_id, "datetime":"unset"},
+            {"$set" : {"datetime":self.event.postback.params['datetime']}}))
             msg = mongo.find_one({"user":self.event.source.user_id, "datetime":self.event.postback.params['datetime']},{"text"})
-
+            print(msg)
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime']])
         elif self.query['type'] == "todo":
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
