@@ -64,7 +64,7 @@ class PostbackHandler():
                 self.line_bot_api.push_message(
                     self.event.source.user_id,
                     TextSendMessage(
-                        text=self.event.postback.params['datetime']
+                        text=self.query['text']
                     )
                 )
                 break
