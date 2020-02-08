@@ -55,7 +55,7 @@ class PostbackHandler():
         import pytz
         
         while 1:
-            
+
             asia = pytz.timezone('Asia/Jakarta')
             now = datetime.now(asia)
             now = now.strftime("%Y-%m-%dT%H:%M")
@@ -67,5 +67,6 @@ class PostbackHandler():
                         text=self.event.postback.params['datetime']
                     )
                 )
+                break
 
         
