@@ -20,9 +20,9 @@ class Reminder():
         self.until = datetime.now(region) + timedelta(60)
         self.until = self.until.strftime("%Y-%m-%dt%H:%M")
 
-        length = len(self.event.message.text)
+        length = len(self.event.message.text.strip())
         maxchar = 260
-        if length > maxchar:
+        if length - 15 > maxchar:
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(
