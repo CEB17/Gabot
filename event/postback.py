@@ -67,6 +67,8 @@ class PostbackHandler():
                         text=self.event.postback.params['datetime']
                     )
                 )
+
+            if now == self.event.postback.params['datetime']:
                 break
 
         
