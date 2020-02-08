@@ -30,28 +30,21 @@ class Reminder():
             return
 
         if re.match(".*#[Rr]eminder.*", self.event.message.text):
-            self.msg = re.split("#[Rr]eminder",self.event.message.text)
-            if re.search(f"(#[Rr]eminder)|(#[Rr]eminder)",self.msg[0]) is not None:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
-                    TextSendMessage(
-                        text=f"[Incorrect format] Please put \"#reminder\" at the end of your message"
-                    )
-                )
-                return
-            elif re.match(".*#[Ee]vent.*", self.event.message.text):
+            if re.match(".*#[Ee]vent.*", self.event.message.text):
                 self.addReminder("#[Ee]vent", "event")
             elif re.match(".*#[Tt]odo.*", self.event.message.text):
                 self.addReminder("#[Tt]odo", "todo")
 
     def addReminder(self, regex, category):
-        if re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",self.msg[0]) is not None:
-            self.line_bot_api.reply_message(
-                self.event.reply_token,
-                TextSendMessage(
-                    text=f"[Incorrect format] Please put \"#reminder #{category}\" at the end of your message"
-                )
-            )
+        
+        msg = re.split(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",self.event.message.text)
+
+        if re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0]) is not None:
+            self.warning(category)
+            return
+        
+        elif re.match("^\s*$", msg[3]) is None:
+            self.warning(category)
             return
 
         prompt = TemplateSendMessage(
@@ -61,7 +54,7 @@ class Reminder():
                 actions=[
                     DatetimePickerAction(
                         label="Set date",
-                        data=f"action=set-reminder&type={category}&text={self.msg[0]}",
+                        data=f"action=set-reminder&type={category}&text={msg[0]}",
                         mode="datetime",initial=self.now
                     ),
                     MessageAction(
@@ -76,3 +69,11 @@ class Reminder():
             self.event.reply_token,
             prompt            
         )
+
+    def warning(self, category):
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    text=f"[Incorrect format] Please put \"#reminder #{category}\" at the end of your message"
+                )
+            )        
