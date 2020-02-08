@@ -68,6 +68,6 @@ class PostbackHandler():
                         text=message
                     )
                 )
-                self.mongo.find_one({"userId":self.event.source.user_id, "datetime":now})
+                self.mongo.delete_one({"userId":self.event.source.user_id, "datetime":now})
                 break
         
