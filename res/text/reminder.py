@@ -29,10 +29,12 @@ class Reminder():
             )
             return
 
-        if re.match(".*#[Rr]eminder.*", self.event.message.text):
-            if re.match(".*#[Ee]vent.*", self.event.message.text):
+        msg = self.event.message.text.replace('\n','')
+
+        if re.match(".*#[Rr]eminder.*", msg):
+            if re.match(".*#[Ee]vent.*", msg):
                 self.addReminder("#[Ee]vent", "event")
-            elif re.match(".*#[Tt]odo.*", self.event.message.text):
+            elif re.match(".*#[Tt]odo.*", msg):
                 self.addReminder("#[Tt]odo", "todo")
 
     def addReminder(self, regex, category):
@@ -43,7 +45,7 @@ class Reminder():
             self.warning(category)
             return
 
-        elif re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0]) is not None:
+        elif re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0].replace('\n','')) is not None:
             self.warning(category)
             return
         
