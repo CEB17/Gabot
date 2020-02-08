@@ -60,7 +60,7 @@ class Reminder():
                 actions=[
                     DatetimePickerAction(
                         label="Set date",
-                        data=f"action=set-reminder&type={category}&text={msg[0]}",
+                        data=f"action=set-reminder&type={category}&text={msg[0].strip()}",
                         mode="datetime",initial=self.now
                     ),
                     MessageAction(
