@@ -1,5 +1,6 @@
 from linebot.models import (
-    TextSendMessage
+    TextSendMessage,
+    TemplateSendMessage
 )
 
 from multidict import CIMultiDict
@@ -35,9 +36,15 @@ class PostbackHandler():
 
         self.line_bot_api.reply_message(
             self.event.reply_token,
-            TextSendMessage(
-                text="Reminder has been set"
-            )
+            [
+                TextSendMessage(
+                    text="Reminder has been set"
+                ),
+                TextSendMessage(
+                    text=self.query['text'],
+                    timeout=10
+                )
+            ]
         )
 
         
