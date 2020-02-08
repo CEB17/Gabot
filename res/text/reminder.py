@@ -7,7 +7,7 @@ from linebot.models import (
     DatetimePickerAction
 )
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz, re
 
 class Reminder():
@@ -17,6 +17,8 @@ class Reminder():
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
+        self.until = datetime.now(region) + timedelta(60)
+        self.until = self.until.strftime("%Y-%m-%dt%H:%M")
 
         length = len(self.event.message.text)
         maxchar = 260
@@ -61,7 +63,7 @@ class Reminder():
                     DatetimePickerAction(
                         label="Set date",
                         data=f"action=set-reminder&type={category}&text={msg[0].strip()}",
-                        mode="datetime",initial=self.now
+                        mode="datetime",initial=self.now, min=self.now, max=self.until
                     ),
                     MessageAction(
                         label="Forget it",
