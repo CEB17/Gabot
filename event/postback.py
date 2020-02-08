@@ -49,7 +49,7 @@ class PostbackHandler():
 
         thread.start()
 
-    def sendReminder(self, user, message, time):
+    def sendReminder(self, destination, message, time):
         from datetime import datetime
         import pytz
         
@@ -59,11 +59,11 @@ class PostbackHandler():
             now = datetime.now(asia)
             now = now.strftime("%Y-%m-%dT%H:%M")
 
-            if now == self.event.postback.params['datetime']:
+            if now == time:
                 self.line_bot_api.push_message(
-                    self.event.source.user_id,
+                    destination,
                     TextSendMessage(
-                        text=self.query['text']
+                        text=message
                     )
                 )
                 break
