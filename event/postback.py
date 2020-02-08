@@ -5,6 +5,8 @@ from linebot.models import (
 
 from multidict import CIMultiDict
 from controllers.db import *
+from threading import Thread
+from time import sleep
 
 
 class PostbackHandler():
@@ -43,11 +45,20 @@ class PostbackHandler():
             ]
         )
 
+
+
+        thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
+        thread.start()
+
+    def sendReminder(self, user, message, time):
+        sleep(5)
+        from datetime import datetime
+        now = datetime.now()
+        now = now.strftime("%Y-%m-%dT%H:%M")
         self.line_bot_api.push_message(
             self.event.source.user_id,
             TextSendMessage(
-                text=self.query['text'],
-                timeout=5000
+                text=now
             )
         )
 
