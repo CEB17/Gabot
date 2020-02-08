@@ -60,7 +60,7 @@ class PostbackHandler():
         self.line_bot_api.push_message(
             self.event.source.user_id,
             TextSendMessage(
-                text=now
+                text=self.event.postback.params['datetime']
             )
         )
 
