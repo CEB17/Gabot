@@ -30,7 +30,6 @@ class PostbackHandler():
             "source" : self.event.source.type,
             "type" : self.query['type'],
             "datetime" : self.event.postback.params['datetime'],
-            "text" : self.query['text']
         }
 
         mongo = db.reminder
