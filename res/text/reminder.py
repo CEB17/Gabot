@@ -39,7 +39,11 @@ class Reminder():
         
         msg = re.split(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",self.event.message.text)
 
-        if re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0]) is not None:
+        if len(msg) < 3:
+            self.warning(category)
+            return
+
+        elif re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0]) is not None:
             self.warning(category)
             return
         
@@ -76,4 +80,4 @@ class Reminder():
                 TextSendMessage(
                     text=f"[Incorrect format] Please put \"#reminder #{category}\" at the end of your message"
                 )
-            )        
+            )
