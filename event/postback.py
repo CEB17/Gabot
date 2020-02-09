@@ -100,8 +100,10 @@ class PostbackHandler():
         t = t.split('T')
         date = t[0].split('-')
         time = t[1].split(':')
+        now = datetime.now(self.asia)
+        now = datetime(now.year,now.month,now.day,now.hour,now.minute)
 
-        if datetime.now(self.asia) > datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1])):
+        if now > datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1])):
             return True
 
         return False
