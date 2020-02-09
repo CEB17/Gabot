@@ -23,6 +23,8 @@ class PostbackHandler():
 
         if self.query['action'] == "set-reminder":
             self.setReminder()
+        elif self.query['action'] == "delete-reminder":
+            pass
 
     def setReminder(self):
 
