@@ -68,6 +68,14 @@ class PostbackHandler():
             m = self.event.source.user_id + self.query['text']
             h.update(m.encode('utf-8'))
             data = self.mongo.find_one({"uuid":h.hexdigest()},{"uuid"})
+            if data is None:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                    )
+                )
+                return
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
 
         thread.start()
