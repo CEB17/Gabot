@@ -94,12 +94,13 @@ class Reminder():
             data = {
                 "uuid" : self.uuid,
                 "type" : category,
+                "tmp" : msg[0].strip(),
                 "created" : self.now
             }
 
             self.mongo.insert_one(data)
 
-            query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
+            query = f"action=set-reminder&type={category}&id={self.uuid}"
             forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
         prompt = TemplateSendMessage(

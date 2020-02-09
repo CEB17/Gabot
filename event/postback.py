@@ -64,7 +64,8 @@ class PostbackHandler():
 
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         elif self.query['type'] == "todo":
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], ''])
+            txt = self.mongo.find_one_and_update({"uuid":self.query['id']},{"$unset" : {"tmp":""}})
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, txt['tmp'], self.event.postback.params['datetime'], self.query['id']])
 
         thread.start()
 
@@ -108,7 +109,13 @@ class PostbackHandler():
             return
 
         self.mongo.delete_one({"uuid": id})
-        
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            TextSendMessage(
+                text="Alright, then."
+            )
+        )
+
     def isOlder(self, t):
         t = t.split('T')
         date = t[0].split('-')
