@@ -9,7 +9,7 @@ from linebot.models import (
 from time import sleep
 from datetime import datetime, timedelta
 from controllers.db import *
-import pytz, re, uuid
+import pytz, re, uuid, hashlib
 
 class Reminder():
     def __init__(self,event,line_bot_api):
@@ -91,16 +91,18 @@ class Reminder():
             forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
         elif category == "todo":
+            h = hashlib.sha1()
+            m = self.event.source.user_id + msg[0].strip()
+            h.update(m.encode('utf-8'))
             data = {
-                "uuid" : self.uuid,
+                "uuid" : h.hexdigest(),
                 "type" : category,
-                "tmp" : msg[0].strip(),
                 "created" : self.now
             }
 
             self.mongo.insert_one(data)
 
-            query = f"action=set-reminder&type={category}&id={self.uuid}"
+            query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
             forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
         prompt = TemplateSendMessage(

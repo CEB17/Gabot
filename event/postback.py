@@ -9,7 +9,7 @@ from controllers.db import *
 from threading import Thread
 from time import sleep
 from datetime import datetime
-import pytz
+import pytz, hashlib
 
 
 class PostbackHandler():
@@ -64,8 +64,11 @@ class PostbackHandler():
 
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         elif self.query['type'] == "todo":
-            txt = self.mongo.find_one_and_update({"uuid":self.query['id']},{"$unset" : {"tmp":""}})
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, txt['tmp'], self.event.postback.params['datetime'], self.query['id']])
+            h = hashlib.sha1()
+            m = self.event.source.user_id + self.query['text']
+            h.update(m.encode('utf-8'))
+            data = self.mongo.find_one({"uuid":h.hexdigest()},{"uuid"})
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
 
         thread.start()
 
@@ -86,6 +89,8 @@ class PostbackHandler():
             now = now.strftime("%Y-%m-%dT%H:%M")
 
             if now == time:
+                if self.mongo.find_one({"uuid":id},{"uuid"}) is None:
+                    return
                 self.line_bot_api.push_message(
                     destination,
                     TextSendMessage(
