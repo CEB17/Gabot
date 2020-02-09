@@ -1,9 +1,9 @@
 from linebot.models import (
     TextSendMessage,
+    StickerSendMessage,
     TemplateSendMessage,
     ConfirmTemplate,
     PostbackAction,
-    MessageAction,
     DatetimePickerAction
 )
 from time import sleep
@@ -66,10 +66,10 @@ class Reminder():
             return
 
         if category == "event":
-            mongo = db.reminder
+            self.mongo = db.reminder
             count = 0
 
-            for data in mongo.find({"userId":self.event.source.user_id, "type":"event"},{"userId"}):
+            for data in self.mongo.find({"userId":self.event.source.user_id, "type":"event"},{"userId"}):
                 count = count + 1
 
             if count > 3:
@@ -80,16 +80,19 @@ class Reminder():
                 "userId" : self.event.source.user_id,
                 "source" : self.event.source.type,
                 "type" : category,
+                "eventId" : count,
                 "created" : self.now,
                 "text" : msg[0].strip(),
                 "datetime" : "unset"
             }
 
-            mongo.insert_one(data)
-            query = f"action=set-reminder&type={category}"
+            self.mongo.insert_one(data)
+            query = f"action=set-reminder&type={category}&id={count}"
+            forget = f"action=delete-reminder&type={category}&id={count}"
 
         elif category == "todo":
             query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
+            forget = f"action=delete-reminder&type={category}"
 
         prompt = TemplateSendMessage(
             alt_text="Please choose when will it be held",
@@ -101,8 +104,9 @@ class Reminder():
                         data=query,
                         mode="datetime",initial=self.now, min=self.now, max=self.until
                     ),
-                    MessageAction(
+                    PostbackAction(
                         label="Forget it",
+                        data=forget,
                         text="Nah, forget it."
                     )
                 ]
@@ -113,6 +117,8 @@ class Reminder():
             self.event.reply_token,
             prompt            
         )
+
+        self.alert(count, self.event.source.user_id)
 
     def warning(self, category, error):
 
@@ -131,3 +137,56 @@ class Reminder():
                     text=f"You can only set up to 3 {category} reminders to group, ask KY if you need help"
                 )
             )
+
+    def alert(self, eventId, userId):
+        tick = 0
+        while 1:
+            amount = self.mongo.find_one({"user":userId, "datetime": "unset", "eventId":eventId}, {"eventId"})
+
+            if amount is not None:
+                break
+
+            tick = tick + 1
+            if tick == 10:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    [
+                    StickerSendMessage(
+                        package_id="11537",
+                        sticker_id="52002753"
+                    ),
+                    TextSendMessage(
+                        text="Sorry, you haven't set the date and time yet."
+                    )
+                    ]
+                )
+
+            elif tick == 20:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    [
+                    StickerSendMessage(
+                        package_id="11537",
+                        sticker_id="52002744"
+                    ),
+                    TextSendMessage(
+                        text="Ain't you gonna set it, mate?"
+                    )
+                    ]
+                )
+
+            elif tick == 30:
+                self.mongo.delete_one({"user":userId, "datetime": "unset", "eventId":eventId})
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    [
+                    StickerSendMessage(
+                        package_id="11537",
+                        sticker_id="52002739"
+                    ),
+                    TextSendMessage(
+                        text="Your message has expired, try resend again."
+                    )
+                    ]
+                )
+            sleep(1)
