@@ -103,7 +103,7 @@ class Reminder():
             self.mongo.insert_one(data)
 
             query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
-            forget = f"action=delete-reminder&type={category}&id={self.uuid}"
+            forget = f"action=delete-reminder&type={category}&text={msg[0].strip()}"
 
         prompt = TemplateSendMessage(
             alt_text="Please choose when will it be held",
