@@ -51,7 +51,7 @@ class Reminder():
                 self.addReminder("#[Tt]odo", "todo")
 
     def addReminder(self, regex, category):
-        
+        self.mongo = db.reminder
         msg = re.split(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",self.event.message.text)
 
         if len(msg) < 3:
@@ -67,7 +67,6 @@ class Reminder():
             return
 
         if category == "event":
-            self.mongo = db.reminder
             count = 0
 
             for data in self.mongo.find({"userId":self.event.source.user_id, "type":"event"},{"userId"}):
