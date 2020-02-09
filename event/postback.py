@@ -1,5 +1,6 @@
 from linebot.models import (
     TextSendMessage,
+    StickerSendMessage,
     TemplateSendMessage
 )
 
@@ -7,12 +8,30 @@ from multidict import CIMultiDict
 from controllers.db import *
 from threading import Thread
 from time import sleep
+from datetime import datetime
+import pytz
 
 
 class PostbackHandler():
     def __init__(self,event,line_bot_api):
         self.event = event
         self.line_bot_api = line_bot_api
+        self.asia = pytz.timezone('Asia/Jakarta')
+
+        if self.isOlder(self.event.postback.params['datetime']):
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                [
+                    StickerSendMessage(
+                        package_id="11538",
+                        sticker_id="51626508"
+                    ),
+                    TextSendMessage(
+                        text="Duh, do you think I'm Dr.Strange? Don't make me laugh"
+                    )
+                ]
+            )
+            return
 
         arr = []
         q = event.postback.data
@@ -62,14 +81,9 @@ class PostbackHandler():
             ]
         )
 
-    def sendReminder(self, destination, message, time):
-        from datetime import datetime
-        import pytz
-        
+    def sendReminder(self, destination, message, time):        
         while 1:
-
-            asia = pytz.timezone('Asia/Jakarta')
-            now = datetime.now(asia)
+            now = datetime.now(self.asia)
             now = now.strftime("%Y-%m-%dT%H:%M")
 
             if now == time:
@@ -82,3 +96,12 @@ class PostbackHandler():
                 self.mongo.delete_one({"userId":destination, "datetime":now})
                 break
         
+    def isOlder(self, t):
+        t = t.split('T')
+        date = t[0].split('-')
+        time = t[1].split(':')
+
+        if datetime.now(self.asia) > datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1])):
+            return True
+
+        return False
