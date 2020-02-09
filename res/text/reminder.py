@@ -147,7 +147,7 @@ class Reminder():
                 break
 
             tick = tick + 1
-            if tick == 10:
+            if tick == 20:
                 self.line_bot_api.push_message(
                     userId,
                     [
@@ -161,7 +161,7 @@ class Reminder():
                     ]
                 )
 
-            elif tick == 20:
+            elif tick == 40:
                 self.line_bot_api.push_message(
                     userId,
                     [
@@ -175,7 +175,7 @@ class Reminder():
                     ]
                 )
 
-            elif tick == 30:
+            elif tick == 60:
                 self.mongo.delete_one({"user":userId, "datetime": "unset", "eventId":eventId})
                 self.line_bot_api.push_message(
                     userId,

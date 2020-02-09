@@ -29,7 +29,7 @@ class PostbackHandler():
         if self.query['type'] == "event":
             self.mongo = db.reminder
             
-            self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "eventId":self.query['id']},
+            self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "eventId":int(self.query['id'])},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
             msg = self.mongo.find_one({"userId":self.event.source.user_id, "datetime":self.event.postback.params['datetime']},{"text"})
