@@ -43,7 +43,7 @@ class PostbackHandler():
         if self.query['action'] == "set-reminder":
             self.setReminder()
         elif self.query['action'] == "delete-reminder":
-            pass
+            self.deleteReminder(self.event.source.user_id, self.query['id'])
 
     def setReminder(self):
 
@@ -95,6 +95,20 @@ class PostbackHandler():
                 )
                 self.mongo.delete_one({"userId":destination, "datetime":now})
                 break
+
+    def deleteReminder(self, userId, eventId):
+        amount = self.mongo.find_one({"userId": userId, "eventId": int(eventId)}, {"eventId"})
+
+        if amount is None:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    text="Ah, sorry. I couldn't forget non-existent message."
+                )
+            )
+            return
+
+        self.mongo.delete_one({"userId": userId, "eventId": int(eventId)})
         
     def isOlder(self, t):
         t = t.split('T')
