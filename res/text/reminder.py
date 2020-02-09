@@ -9,7 +9,7 @@ from linebot.models import (
 from time import sleep
 from datetime import datetime, timedelta
 from controllers.db import *
-import pytz, re
+import pytz, re, uuid
 
 class Reminder():
     def __init__(self,event,line_bot_api):
@@ -20,6 +20,7 @@ class Reminder():
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
         self.until = datetime.now(region) + timedelta(60)
         self.until = self.until.strftime("%Y-%m-%dt%H:%M")
+        self.uuid = uuid.uuid4()
 
         msg = self.event.message.text.replace('\n','')
 
@@ -80,19 +81,27 @@ class Reminder():
                 "userId" : self.event.source.user_id,
                 "source" : self.event.source.type,
                 "type" : category,
-                "eventId" : count,
+                "uuid" : self.uuid,
                 "created" : self.now,
                 "text" : msg[0].strip(),
                 "datetime" : "unset"
             }
 
             self.mongo.insert_one(data)
-            query = f"action=set-reminder&type={category}&id={count}"
-            forget = f"action=delete-reminder&type={category}&id={count}"
+            query = f"action=set-reminder&type={category}&id={self.uuid}"
+            forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
         elif category == "todo":
+            data = {
+                "uuid" : self.uuid,
+                "type" : category,
+                "created" : self.now
+            }
+
+            self.mongo.insert_one(data)
+
             query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
-            forget = f"action=delete-reminder&type={category}"
+            forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
         prompt = TemplateSendMessage(
             alt_text="Please choose when will it be held",
@@ -118,7 +127,7 @@ class Reminder():
             prompt
         )
 
-        self.alert(count, self.event.source.user_id)
+        self.alert(self.uuid, self.event.source.user_id)
 
     def warning(self, category, error):
 
@@ -141,7 +150,7 @@ class Reminder():
     def alert(self, eventId, userId):
         tick = 0
         while 1:
-            amount = self.mongo.find_one({"userId":userId, "datetime": "unset", "eventId":eventId}, {"eventId"})
+            amount = self.mongo.find_one({"userId":userId, "datetime": "unset", "uuid":eventId}, {"uuid"})
             if amount is None:
                 break
 
@@ -175,7 +184,7 @@ class Reminder():
                 )
 
             elif tick == 60:
-                self.mongo.delete_one({"userId":userId, "datetime": "unset", "eventId":eventId})
+                self.mongo.delete_one({"userId":userId, "datetime": "unset", "uuid":eventId})
                 self.line_bot_api.push_message(
                     userId,
                     [

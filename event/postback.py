@@ -28,7 +28,7 @@ class PostbackHandler():
         if self.query['action'] == "set-reminder":
             self.setReminder()
         elif self.query['action'] == "delete-reminder":
-            self.deleteReminder(self.event.source.user_id, self.query['id'])
+            self.deleteReminder(self.query['id'])
 
     def setReminder(self):
 
@@ -50,7 +50,7 @@ class PostbackHandler():
         if self.query['type'] == "event":
             self.mongo = db.reminder
             
-            self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "eventId":int(self.query['id'])},
+            self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
             msg = self.mongo.find_one({"userId":self.event.source.user_id, "datetime":self.event.postback.params['datetime']},{"text"})
@@ -64,9 +64,9 @@ class PostbackHandler():
                 )
                 return
 
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime']])
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         elif self.query['type'] == "todo":
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], self.query['id']])
 
         thread.start()
 
@@ -81,7 +81,7 @@ class PostbackHandler():
             ]
         )
 
-    def sendReminder(self, destination, message, time):        
+    def sendReminder(self, destination, message, time, id):
         while 1:
             now = datetime.now(self.asia)
             now = now.strftime("%Y-%m-%dT%H:%M")
@@ -93,11 +93,11 @@ class PostbackHandler():
                         text=message
                     )
                 )
-                self.mongo.delete_one({"userId":destination, "datetime":now})
+                self.mongo.delete_one({"uuid": id})
                 break
 
-    def deleteReminder(self, userId, eventId):
-        amount = self.mongo.find_one({"userId": userId, "eventId": int(eventId)}, {"eventId"})
+    def deleteReminder(self, id):
+        amount = self.mongo.find_one({"uuid": id}, {"uuid"})
 
         if amount is None:
             self.line_bot_api.reply_message(
@@ -108,7 +108,7 @@ class PostbackHandler():
             )
             return
 
-        self.mongo.delete_one({"userId": userId, "eventId": int(eventId)})
+        self.mongo.delete_one({"uuid": id})
         
     def isOlder(self, t):
         t = t.split('T')
