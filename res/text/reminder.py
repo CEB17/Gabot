@@ -148,8 +148,8 @@ class Reminder():
 
             tick = tick + 1
             if tick == 10:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
+                self.line_bot_api.push_message(
+                    userId,
                     [
                     StickerSendMessage(
                         package_id="11537",
@@ -162,8 +162,8 @@ class Reminder():
                 )
 
             elif tick == 20:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
+                self.line_bot_api.push_message(
+                    userId,
                     [
                     StickerSendMessage(
                         package_id="11537",
@@ -177,8 +177,8 @@ class Reminder():
 
             elif tick == 30:
                 self.mongo.delete_one({"user":userId, "datetime": "unset", "eventId":eventId})
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
+                self.line_bot_api.push_message(
+                    userId,
                     [
                     StickerSendMessage(
                         package_id="11537",

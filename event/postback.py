@@ -26,17 +26,6 @@ class PostbackHandler():
 
     def setReminder(self):
 
-        t = self.event.postback.params['datetime'].split('T')
-
-        self.line_bot_api.reply_message(
-            self.event.reply_token,
-            [
-                TextSendMessage(
-                    text=f"Reminder has been set to {t[0]} {t[1]}"
-                )
-            ]
-        )
-
         if self.query['type'] == "event":
             self.mongo = db.reminder
             
@@ -57,6 +46,17 @@ class PostbackHandler():
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime']])
 
         thread.start()
+
+        t = self.event.postback.params['datetime'].split('T')
+
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            [
+                TextSendMessage(
+                    text=f"Reminder has been set to {t[0]} {t[1]}"
+                )
+            ]
+        )
 
     def sendReminder(self, destination, message, time):
         from datetime import datetime
