@@ -4,6 +4,5 @@ gunicorn
 pytz
 multidict
 dnspython
-hashlib
 pymongo
 uuid
