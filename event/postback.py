@@ -66,7 +66,7 @@ class PostbackHandler():
 
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         elif self.query['type'] == "todo":
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], self.query['id']])
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], ''])
 
         thread.start()
 

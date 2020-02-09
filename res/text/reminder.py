@@ -20,7 +20,7 @@ class Reminder():
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
         self.until = datetime.now(region) + timedelta(60)
         self.until = self.until.strftime("%Y-%m-%dt%H:%M")
-        self.uuid = uuid.uuid4()
+        self.uuid = str(uuid.uuid4())
 
         msg = self.event.message.text.replace('\n','')
 
