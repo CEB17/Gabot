@@ -18,6 +18,20 @@ class PostbackHandler():
         self.line_bot_api = line_bot_api
         self.asia = pytz.timezone('Asia/Jakarta')
 
+        arr = []
+        q = event.postback.data
+        q = q.split('&')
+        for data in q:
+            arr.append(data.split('='))
+        self.query = CIMultiDict(arr)
+
+        if self.query['action'] == "set-reminder":
+            self.setReminder()
+        elif self.query['action'] == "delete-reminder":
+            self.deleteReminder(self.event.source.user_id, self.query['id'])
+
+    def setReminder(self):
+
         if self.isOlder(self.event.postback.params['datetime']):
             self.line_bot_api.reply_message(
                 self.event.reply_token,
@@ -32,20 +46,6 @@ class PostbackHandler():
                 ]
             )
             return
-
-        arr = []
-        q = event.postback.data
-        q = q.split('&')
-        for data in q:
-            arr.append(data.split('='))
-        self.query = CIMultiDict(arr)
-
-        if self.query['action'] == "set-reminder":
-            self.setReminder()
-        elif self.query['action'] == "delete-reminder":
-            self.deleteReminder(self.event.source.user_id, self.query['id'])
-
-    def setReminder(self):
 
         if self.query['type'] == "event":
             self.mongo = db.reminder
