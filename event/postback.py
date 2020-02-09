@@ -37,7 +37,9 @@ class PostbackHandler():
             if msg is None:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
-                    text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                    TextSendMessage(
+                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                    )
                 )
                 return
 

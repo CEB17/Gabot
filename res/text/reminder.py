@@ -115,7 +115,7 @@ class Reminder():
 
         self.line_bot_api.reply_message(
             self.event.reply_token,
-            prompt            
+            prompt
         )
 
         self.alert(count, self.event.source.user_id)
