@@ -143,7 +143,7 @@ class Reminder():
         while 1:
             amount = self.mongo.find_one({"user":userId, "datetime": "unset", "eventId":eventId}, {"eventId"})
 
-            if amount is not None:
+            if amount is None:
                 break
 
             tick = tick + 1
