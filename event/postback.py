@@ -28,7 +28,7 @@ class PostbackHandler():
         if self.query['action'] == "set-reminder":
             self.setReminder()
         elif self.query['action'] == "delete-reminder":
-            self.deleteReminder()
+            self.deleteReminder(self.query['id'])
 
     def setReminder(self):
         self.mongo = db.reminder
