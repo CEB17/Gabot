@@ -28,7 +28,7 @@ class PostbackHandler():
         if self.query['action'] == "set-reminder":
             self.setReminder()
         elif self.query['action'] == "delete-reminder":
-            self.deleteReminder(self.query['id'])
+            self.deleteReminder()
 
     def setReminder(self):
         self.mongo = db.reminder
@@ -108,7 +108,13 @@ class PostbackHandler():
                 self.mongo.delete_one({"uuid": id})
                 break
 
-    def deleteReminder(self, id):
+    def deleteReminder(self, id=None):
+        if self.query['type'] == "todo":
+            h = hashlib.sha1()
+            m = self.event.source.user_id + self.query['text']
+            h.update(m.encode('utf-8'))
+            id = h.hexdigest()
+            
         self.mongo = db.reminder
         amount = self.mongo.find_one({"uuid": id}, {"uuid"})
 
