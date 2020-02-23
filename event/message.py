@@ -16,9 +16,10 @@ class MessageHandler():
             if event.source.type == "group":
                 if "@Gabot" in event.message.text:
                     Greet(event, line_bot_api, botname)
-
                 elif "@all" in event.message.text:
                     Mention(event,line_bot_api)
+                else:
+                    Member(event, line_bot_api)
 
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
