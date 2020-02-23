@@ -188,7 +188,7 @@ class Reminder():
                 )
 
             elif tick == 60:
-                self.mongo.delete_one({"userId":userId, "datetime": "unset", "uuid":eventId})
+                self.mongo.delete_one({"datetime": "unset", "uuid":eventId})
                 self.line_bot_api.push_message(
                     userId,
                     [

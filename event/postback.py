@@ -60,14 +60,29 @@ class PostbackHandler():
             h = hashlib.sha1()
             m = self.event.source.user_id + self.query['text']
             h.update(m.encode('utf-8'))
-            data = self.mongo.find_one_and_update({"uuid":h.hexdigest()},
+            data = self.mongo.find_one_and_update({"uuid":h.hexdigest(), "datetime":"unset"},
             {"$unset" : {"datetime":""}})
             if data is None:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe it's already expired"
+                        text="Sorry, I couldn't find your message. Maybe it's already set or expired"
                     )
+                )
+                self.line_bot_api.push_message(
+                    self.event.source.user_id,
+                    [
+                        StickerSendMessage(
+                            package_id="11538",
+                            sticker_id="51626523"
+                        ),
+                        TextSendMessage(
+                            text="FYI, currently I can't update todo reminder date time. You need to 'forget' and then create a new one."
+                        ),
+                        TextSendMessage(
+                            text="Pardon my foolishness"
+                        )
+                    ]
                 )
                 return
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
