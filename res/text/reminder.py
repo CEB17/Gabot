@@ -94,10 +94,12 @@ class Reminder():
             h = hashlib.sha1()
             m = self.event.source.user_id + msg[0].strip()
             h.update(m.encode('utf-8'))
+            self.uuid = h.hexdigest()
             data = {
-                "uuid" : h.hexdigest(),
+                "uuid" : self.uuid,
                 "type" : category,
-                "created" : self.now
+                "created" : self.now,
+                "datetime": "unset"
             }
 
             self.mongo.insert_one(data)

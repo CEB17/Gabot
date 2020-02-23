@@ -48,18 +48,11 @@ class PostbackHandler():
             return
 
         if self.query['type'] == "event":            
-            self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
+            msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
-            msg = self.mongo.find_one({"userId":self.event.source.user_id, "datetime":self.event.postback.params['datetime']},{"text"})
-
             if msg is None:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
-                    TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
-                    )
-                )
+                self.updateReminder()
                 return
 
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
@@ -67,12 +60,13 @@ class PostbackHandler():
             h = hashlib.sha1()
             m = self.event.source.user_id + self.query['text']
             h.update(m.encode('utf-8'))
-            data = self.mongo.find_one({"uuid":h.hexdigest()},{"uuid"})
+            data = self.mongo.find_one_and_update({"uuid":h.hexdigest()},
+            {"$unset" : {"datetime":""}})
             if data is None:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                        text="Sorry, I couldn't find your message. Maybe it's already expired"
                     )
                 )
                 return
@@ -107,6 +101,38 @@ class PostbackHandler():
                 )
                 self.mongo.delete_one({"uuid": id})
                 break
+
+    def updateReminder(self):
+        if self.query['type'] == "event":            
+            msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "uuid":self.query['id']},
+            {"$set" : {"datetime":self.event.postback.params['datetime']}})
+
+            if msg is None:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                    )
+                )
+                return
+
+            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
+        
+        # Currently not support update Todo Reminder
+        # elif self.query['type'] == "todo":
+        #    return
+        thread.start()
+
+        t = self.event.postback.params['datetime'].split('T')
+
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            [
+                TextSendMessage(
+                    text=f"Reminder has been set to {t[0]} {t[1]}"
+                )
+            ]
+        )
 
     def deleteReminder(self):
         if self.query['type'] == "todo":
