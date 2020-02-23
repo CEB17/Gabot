@@ -76,6 +76,14 @@ class PostbackHandler():
 
         t = self.event.postback.params['datetime'].split('T')
 
+        self.line_bot_api.push_message(
+            self.event.source.user_id,
+            StickerSendMessage(
+                package_id="11538",
+                sticker_id="51626520"
+            )
+        )
+
         self.line_bot_api.reply_message(
             self.event.reply_token,
             [
@@ -91,8 +99,16 @@ class PostbackHandler():
             now = now.strftime("%Y-%m-%dT%H:%M")
 
             if now == time:
-                if self.mongo.find_one({"uuid":id},{"uuid"}) is None:
+                data = self.mongo.find_one({"uuid":id})
+                if data is None:
                     return
+
+                try:
+                    if time != data['datetime']:
+                        return
+                except KeyError:
+                    pass
+
                 self.line_bot_api.push_message(
                     destination,
                     TextSendMessage(

@@ -108,9 +108,9 @@ class Reminder():
             forget = f"action=delete-reminder&type={category}&text={msg[0].strip()}"
 
         prompt = TemplateSendMessage(
-            alt_text="Please choose when will it be held",
+            alt_text="Please set the date and time",
             template=ConfirmTemplate(
-                text=f"Please choose when will it be held",
+                text=f"Please set the date and time",
                 actions=[
                     DatetimePickerAction(
                         label="Set date",
@@ -154,7 +154,7 @@ class Reminder():
     def alert(self, eventId, userId):
         tick = 0
         while 1:
-            amount = self.mongo.find_one({"userId":userId, "datetime": "unset", "uuid":eventId}, {"uuid"})
+            amount = self.mongo.find_one({"datetime": "unset", "uuid":eventId}, {"uuid"})
             if amount is None:
                 break
 
