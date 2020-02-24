@@ -28,4 +28,6 @@ class MessageHandler():
         elif isinstance(event.message, ImageMessage):
             message_id = event.message.id
             img = line_bot_api.get_message_content(message_id)
-            print(type(img.iter_content()))
+            for chunk in img.iter_content():
+                print(type(chunk))
+                print(chunk)
