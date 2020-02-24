@@ -75,7 +75,7 @@ class Member():
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     TextSendMessage(
-                        self.data['nrp']
+                        data['nrp']
                     )
                 )
                 return
