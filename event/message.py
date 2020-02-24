@@ -13,7 +13,7 @@ class MessageHandler():
             sys.exit(1)
 
         if isinstance(event.message, TextMessage):
-            if event.source.type == "group":
+            if event.source.type == "group" and event.source.group_id == os.getenv('GROUP_ID', None):
                 if "@Gabot" in event.message.text:
                     Greet(event, line_bot_api, botname)
                 elif "@all" in event.message.text:
