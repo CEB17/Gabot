@@ -1,4 +1,4 @@
-from linebot.models import (
+1from linebot.models import (
     TextSendMessage,
     StickerSendMessage,
     TemplateSendMessage,
@@ -17,22 +17,14 @@ class Member():
         self.line_bot_api = line_bot_api
         self.message = event.message.text.split(" ")
 
-        if re.match("\?[Nn][Rr][Pp]\s[a-zA-Z]+$", event.message.text):
-            if len(self.message) == 2:
-                self.findName()
-            elif len(self.message) > 2:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
-                    TextSendMessage(
-                        "?nrp [nama panggilan]/[nrp]"
-                    )
-                )
-                return
+        if re.match("\?[Nn][Rr][Pp]\s[a-zA-Z']+$", event.message.text):
+            self.findNRP()
         elif re.match("\?[Nn][Rr][Pp]\s[\d]+$", event.message.text):
-            if len(self.message) == 2:
-                self.findNRP()
+            self.findName()
+        elif re.match("\?[Ff]ullname\s[a-zA-Z']+$", event.message.text):
+            self.findFullname()
 
-    def findNRP(self):
+    def findName(self):
         nrp = ""
         if len(self.message[1]) == 2:
             if "40" in self.message[1]:
@@ -64,7 +56,7 @@ class Member():
             )
         )
 
-    def findName(self):
+    def findNRP(self):
         match = False
         for data in self.mongo.find({}):
             for name in data['alias']:
@@ -76,6 +68,22 @@ class Member():
                     self.event.reply_token,
                     TextSendMessage(
                         data['nrp']
+                    )
+                )
+                return
+
+    def findFullname(self):
+        match = False
+        for data in self.mongo.find({}):
+            for name in data['alias']:
+                if re.match(name, self.message[1]):
+                    match = True
+                    break
+            if match:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        data['name']
                     )
                 )
                 return
