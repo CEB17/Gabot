@@ -18,7 +18,7 @@ class Member():
             if len(self.message) == 2:
                 return
         elif re.match("\?[Nn][Rr][Pp]\s[\d]+", event.message.text):
-            if len(self.message) == 2):
+            if len(self.message) == 2:
                 self.findNRP()
 
     def findNRP(self):
