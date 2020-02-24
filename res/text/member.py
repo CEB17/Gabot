@@ -17,20 +17,21 @@ class Member():
         if re.match("\?[Nn][Rr][Pp]\s[a-zA-Z]+$", event.message.text):
             if len(self.message) == 2:
                 return
-        elif re.match("\?[Nn][Rr][Pp]\s[\d]+", event.message.text):
+        elif re.match("\?[Nn][Rr][Pp]\s[\d]+$", event.message.text):
             if len(self.message) == 2:
                 self.findNRP()
 
     def findNRP(self):
-        if len(self.message[0]) == 2:
-            nrp = "22101710" + self.message[0]
-        elif len(self.message[0]) == 4:
-            if self.message[0][:2] == "17":
-                nrp = "22101710" + self.message[0][2:]
-            elif self.message[0][:2] == "16":
-                nrp = "22101610" + self.message[0][2:]
-        elif len(self.message[0]) == 10:
-            nrp = self.message[0]
+        nrp = ""
+        if len(self.message[1]) == 2:
+            nrp = "22101710" + self.message[1]
+        elif len(self.message[1]) == 4:
+            if self.message[1][:2] == "17":
+                nrp = "22101710" + self.message[1][2:]
+            elif self.message[1][:2] == "16":
+                nrp = "22101610" + self.message[1][2:]
+        elif len(self.message[1]) == 10:
+            nrp = self.message[1]
         data = self.mongo.find_one({"nrp" : nrp},{"name"})
 
         if data is None:
