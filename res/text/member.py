@@ -19,6 +19,14 @@ class Member():
 
         if re.match("\?[Nn][Rr][Pp]\s[a-zA-Z]+$", event.message.text):
             if len(self.message) == 2:
+                self.findName()
+            elif len(self.message) > 2:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        "?nrp [nama panggilan]/[nrp]"
+                    )
+                )
                 return
         elif re.match("\?[Nn][Rr][Pp]\s[\d]+$", event.message.text):
             if len(self.message) == 2:
@@ -55,6 +63,22 @@ class Member():
                 data['name']
             )
         )
+
+    def findName(self):
+        match = False
+        for data in self.mongo.find({}):
+            for name in data['alias']:
+                if re.match(name, self.message[1]):
+                    match = True
+                    break
+            if match:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        self.data['nrp']
+                    )
+                )
+                return
 
     def prompt(self, nrp):
         confirm_template = TemplateSendMessage(
