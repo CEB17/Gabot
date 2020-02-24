@@ -1,6 +1,9 @@
 from linebot.models import (
     TextSendMessage,
     StickerSendMessage,
+    TemplateSendMessage,
+    ConfirmTemplate,
+    MessageAction,
 )
 from controllers.db import *
 
@@ -24,6 +27,9 @@ class Member():
     def findNRP(self):
         nrp = ""
         if len(self.message[1]) == 2:
+            if "40" in self.message[1]:
+                self.prompt("40")
+                return
             nrp = "22101710" + self.message[1]
         elif len(self.message[1]) == 4:
             if self.message[1][:2] == "17":
@@ -49,3 +55,32 @@ class Member():
                 data['name']
             )
         )
+
+    def prompt(self, nrp):
+        confirm_template = TemplateSendMessage(
+            alt_text="Which?",
+            template=ConfirmTemplate(
+                text="Which?",
+                actions=[
+                    MessageAction(
+                        label=f"22101610{nrp}",
+                        text=f"?nrp 16{nrp}"
+                    ),
+                    MessageAction(
+                        label=f"22101710{nrp}",
+                        text=f"?nrp 17{nrp}"
+                    )
+                ]
+            )
+        )
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            [
+                StickerSendMessage(
+                    package_id= "11539",
+                    sticker_id= "52114129"
+                ),
+                confirm_template
+            ]
+        )
+        return

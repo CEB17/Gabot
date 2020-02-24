@@ -65,13 +65,10 @@ class PostbackHandler():
             if data is None:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
-                    TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe it's already set or expired"
-                    )
-                )
-                self.line_bot_api.push_message(
-                    self.event.source.user_id,
                     [
+                        TextSendMessage(
+                            text="Sorry, I couldn't find your message. Maybe it's already set or expired"
+                        ),
                         StickerSendMessage(
                             package_id="11538",
                             sticker_id="51626523"
@@ -84,6 +81,7 @@ class PostbackHandler():
                         )
                     ]
                 )
+
                 return
             thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
 
@@ -91,17 +89,13 @@ class PostbackHandler():
 
         t = self.event.postback.params['datetime'].split('T')
 
-        self.line_bot_api.push_message(
-            self.event.source.user_id,
-            StickerSendMessage(
-                package_id="11538",
-                sticker_id="51626520"
-            )
-        )
-
         self.line_bot_api.reply_message(
             self.event.reply_token,
             [
+                StickerSendMessage(
+                package_id="11538",
+                sticker_id="51626520"
+               ),
                 TextSendMessage(
                     text=f"Reminder has been set to {t[0]} {t[1]}"
                 )
