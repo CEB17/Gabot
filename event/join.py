@@ -13,9 +13,15 @@ class JoinHandler():
             if event.source.group_id != os.getenv('GROUP_ID', None):
                 line_bot_api.push_message(
                     os.getenv('ADMIN', None),
-                    TextSendMessage(
-                        f"Help!! 0x10001C I almost got kidnapped on {event.source.group_id}"
-                    )
+                    [
+                        StickerSendMessage(
+                            package_id="11539",
+                            sticker_id="52114140"
+                        ),
+                        TextSendMessage(
+                            f"Help!! I almost got kidnapped on {event.source.group_id}"
+                        )
+                    ]
                 )
                 
                 line_bot_api.reply_message(
@@ -28,7 +34,7 @@ class JoinHandler():
 
                 line_bot_api.leave_group(event.source.group_id)
                 return
-                
+
             line_bot_api.push_message(
                 os.getenv('ADMIN', None),
                 TextSendMessage(
@@ -38,9 +44,15 @@ class JoinHandler():
         elif event.source.type == "room":
             line_bot_api.push_message(
                 os.getenv('ADMIN', None),
-                TextSendMessage(
-                    f"Help!! 0x10001C I almost got kidnapped on {event.source.room_id}"
-                )
+                [
+                    StickerSendMessage(
+                        package_id="11539",
+                        sticker_id="52114140"
+                    ),
+                    TextSendMessage(
+                    f"Help!! I almost got kidnapped on {event.source.room_id}"
+                    )
+                ]
             )
 
             line_bot_api.reply_message(
