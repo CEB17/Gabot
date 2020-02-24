@@ -19,7 +19,7 @@ class JoinHandler():
                             sticker_id="52114140"
                         ),
                         TextSendMessage(
-                            f"Help!! I almost got kidnapped on {event.source.group_id}"
+                            f"Help!! I almost got kidnapped on group {event.source.group_id}"
                         )
                     ]
                 )
@@ -50,7 +50,7 @@ class JoinHandler():
                         sticker_id="52114140"
                     ),
                     TextSendMessage(
-                    f"Help!! I almost got kidnapped on {event.source.room_id}"
+                    f"Help!! I almost got kidnapped on room {event.source.room_id}"
                     )
                 ]
             )

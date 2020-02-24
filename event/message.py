@@ -1,5 +1,6 @@
 from linebot.models import (
-    TextMessage
+    TextMessage,
+    ImageMessage
 )
 from res.text import *
 import sys
@@ -24,3 +25,7 @@ class MessageHandler():
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
                 Reminder(event, line_bot_api)
+        elif isinstance(event.message, ImageMessage):
+            message_id = event.message.id
+            img = line_bot_api.get_message_content(message_id)
+            print(type(img))

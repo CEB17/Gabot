@@ -11,7 +11,6 @@ from time import sleep
 from datetime import datetime
 import pytz, hashlib
 
-
 class PostbackHandler():
     def __init__(self,event,line_bot_api):
         self.event = event

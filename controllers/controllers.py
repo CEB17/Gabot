@@ -37,7 +37,6 @@ def handler(app,parser,line_bot_api):
 
 def eventHandler(app, events, line_bot_api):
     for event in events:
-        logging.debug(event)
         if isinstance(event, MessageEvent):
             message.MessageHandler(event, line_bot_api)
         elif isinstance(event, JoinEvent):
