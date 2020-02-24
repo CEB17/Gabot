@@ -1,6 +1,7 @@
 from linebot.models import (
     TextMessage,
-    ImageMessage
+    ImageMessage,
+    ImageSendMessage
 )
 from res.text import *
 import sys
@@ -28,6 +29,15 @@ class MessageHandler():
         elif isinstance(event.message, ImageMessage):
             message_id = event.message.id
             img = line_bot_api.get_message_content(message_id)
-            for chunk in img.iter_content():
-                print(type(chunk))
-                print(chunk)
+
+            with open("image.jpg", 'wb') as fd:
+                for chunk in img.iter_content():
+                    fd.write(chunk)
+            
+            line_bot_api.reply_message(
+                event.reply_token,
+                ImageSendMessage(
+                    original_content_url='image.jpg',
+                    preview_image_url='image.jpg'
+                )
+            )
