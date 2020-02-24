@@ -1,5 +1,6 @@
 from linebot.models import (
     TextSendMessage,
+    StickerSendMessage
 )
 import os
 
@@ -16,8 +17,18 @@ class JoinHandler():
                         f"Help!! 0x10001C I almost got kidnapped on {event.source.group_id}"
                     )
                 )
+                
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    StickerSendMessage(
+                        package_id="11537",
+                        sticker_id="52002758"
+                    )
+                )
+
                 line_bot_api.leave_group(event.source.group_id)
                 return
+                
             line_bot_api.push_message(
                 os.getenv('ADMIN', None),
                 TextSendMessage(
@@ -31,5 +42,14 @@ class JoinHandler():
                     f"Help!! 0x10001C I almost got kidnapped on {event.source.room_id}"
                 )
             )
+
+            line_bot_api.reply_message(
+                event.reply_token,
+                StickerSendMessage(
+                    package_id="11537",
+                    sticker_id="52002758"
+                )
+            )
+
             line_bot_api.leave_room(event.source.room_id)
             return
