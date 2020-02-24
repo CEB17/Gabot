@@ -1,4 +1,4 @@
-1from linebot.models import (
+from linebot.models import (
     TextSendMessage,
     StickerSendMessage,
     TemplateSendMessage,
