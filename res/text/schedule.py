@@ -37,12 +37,10 @@ class Schedule():
                     msg += '\n'
                 self.updateSchedule(Days, sc)
                 i += 1
-
+            msg += f"\n\nUpdate by {self.user.display_name}"
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                TextSendMessage(
-                    msg += f"\n\nUpdate by {self.user.display_name}"
-                )
+                TextSendMessage(msg)
             )
     
     def updateSchedule(self, day, schedule):
