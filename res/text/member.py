@@ -72,6 +72,15 @@ class Member():
                 )
                 return
 
+        if not match:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    "ntah"
+                )
+            )
+            return
+
     def findFullname(self):
         match = False
         for data in self.mongo.find({}):
@@ -88,6 +97,15 @@ class Member():
                 )
                 return
 
+        if not match:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                TextSendMessage(
+                    "ntah"
+                )
+            )
+            return
+            
     def prompt(self, nrp):
         confirm_template = TemplateSendMessage(
             alt_text="Which?",

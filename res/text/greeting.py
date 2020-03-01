@@ -55,8 +55,3 @@ class Greet():
                 self.event.reply_token,
                 TextSendMessage(text=msg[i])
             )
-        # else:
-        #     self.line_bot_api.reply_message(
-        #         self.event.reply_token,
-        #         TextSendMessage(text=self.event.message.text)
-        #     )

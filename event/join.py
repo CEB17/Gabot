@@ -2,7 +2,7 @@ from linebot.models import (
     TextSendMessage,
     StickerSendMessage
 )
-import os
+import os, re
 
 class JoinHandler():
     def __init__(self, event, line_bot_api):
@@ -10,7 +10,7 @@ class JoinHandler():
         self.line_bot_api = line_bot_api
 
         if event.source.type == "group":
-            if event.source.group_id != os.getenv('GROUP_ID', None):
+            if re.match(os.getenv('GROUP_ID', None), event.source.group_id) == None:
                 line_bot_api.push_message(
                     os.getenv('ADMIN', None),
                     [
