@@ -53,7 +53,11 @@ class Schedule():
             {'day': Day['day']}, {'$set':{'id': Day['id'],'subject': schedule,'last_update': self.now, 'user': self.event.source.user_id}}, upsert=True
         )
 
-    def getSchedule(self, day = None):
+    def getSchedule(self):
+        day = None
+        if len(self.event.message.text.split(" ")) > 1:
+            day = self.event.message.text.split(" ")[1]
+
         mongo = db.schedule
         i = 0
         msg = ""
