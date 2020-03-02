@@ -12,10 +12,13 @@ class Schedule():
         self.line_bot_api = line_bot_api
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
+        self.current = self.now.strftime("%d-%m-%Y %H:%M")
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
-        if re.match("/set jadwal\n+\[[A-Za-z']+\](\n)+", self.event.message.text):
-             self.setSchedule()
+        if re.match("/[Ss]et [Jj]adwal\n+\[[A-Za-z']{4,}\](\n)+", self.event.message.text):
+            self.setSchedule()
+        elif re.match("\?[Jj]adwal($|\s[a-zA-Z]{4,}$)", self.event.message.text):
+            self.getSchedule()
 
     def setSchedule(self):
         dayPattern = "([Ss][Ee][Nn][Ii][Nn]|[Ss][Ee][Ll][Aa][Ss][Aa]|[Rr][Aa][Bb][Uu]|[Kk][Aa][Mm][Ii][Ss]|[Jj][Uu][Mm][']?[Aa][Tt])$"
@@ -37,7 +40,7 @@ class Schedule():
                     msg += '\n'
                 self.updateSchedule(Days, sc)
                 i += 1
-            msg += f"\n\nUpdate by {self.user.display_name}"
+            msg += f"\n\nLast updated {self.current}\nby {self.user.display_name}"
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(msg)
@@ -45,18 +48,25 @@ class Schedule():
     
     def updateSchedule(self, day, schedule):
         mongo = db.schedule
+        Day = self.normalize(day)
+        mongo.find_one_and_update(
+            {'day': Day['day']}, {'$set':{'id': Day['id'],'subject': schedule,'last_update': self.now, 'user': self.event.source.user_id}}, upsert=True
+        )
+
+    def getSchedule(self, day = None):
+        mongo = db.schedule
+        if day == None:
+            schedule = mongo.find({})
+
+
+    def normalize(self, day):
         if re.match("[Ss][Ee][Nn][Ii][Nn]$",day):
-            mongo.find_one_and_update(
-                {'day': "SENIN"}, {'$set':{'subject': schedule,'last_update': self.now, 'update_by': self.event.source.user_id}}, upsert=True)
+            return {id: 0,"day": day.upper()}
         elif re.match("[Ss][Ee][Ll][Aa][Ss][Aa]$",day):
-            mongo.find_one_and_update(
-                {'day': "SELASA"}, {'$set':{'subject': schedule,'last_update': self.now, 'update_by': self.event.source.user_id}}, upsert=True)
+            return {id: 1,"day": day.upper()}
         elif re.match("[Rr][Aa][Bb][Uu]$",day):
-            mongo.find_one_and_update(
-                {'day': "RABU"}, {'$set':{'subject': schedule,'last_update': self.now, 'update_by': self.event.source.user_id}}, upsert=True)
+            return {id: 2,"day": day.upper()}
         elif re.match("[Kk][Aa][Mm][Ii][Ss]$",day):
-            mongo.find_one_and_update(
-                {'day': "KAMIS"}, {'$set':{'subject': schedule,'last_update': self.now, 'update_by': self.event.source.user_id}}, upsert=True)
+            return {id: 3,"day": day.upper()}
         elif re.match("[Jj][Uu][Mm][']?[Aa][Tt]$",day):
-            mongo.find_one_and_update(
-                {'day': "JUM'AT"}, {'$set':{'subject': schedule,'last_update': self.now, 'update_by': self.event.source.user_id}}, upsert=True)
+            return {id: 4,"day": "JUM'AT"}
