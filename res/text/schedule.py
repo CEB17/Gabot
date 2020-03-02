@@ -89,8 +89,8 @@ class Schedule():
             if day is not None and not exist:
                 return
             recent = recent.strftime("%D")
-            user = line_bot_api.get_profile(user)
-            msg += f"\nLast updated on {recent}\nby {user.display_name}"
+            user = self.line_bot_api.get_profile(user)
+            msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:
             return
 
