@@ -61,12 +61,12 @@ class Schedule():
 
     def normalize(self, day):
         if re.match("[Ss][Ee][Nn][Ii][Nn]$",day):
-            return {id: 0,"day": day.upper()}
+            return {'id': 0,"day": day.upper()}
         elif re.match("[Ss][Ee][Ll][Aa][Ss][Aa]$",day):
-            return {id: 1,"day": day.upper()}
+            return {'id': 1,"day": day.upper()}
         elif re.match("[Rr][Aa][Bb][Uu]$",day):
-            return {id: 2,"day": day.upper()}
+            return {'id': 2,"day": day.upper()}
         elif re.match("[Kk][Aa][Mm][Ii][Ss]$",day):
-            return {id: 3,"day": day.upper()}
+            return {'id': 3,"day": day.upper()}
         elif re.match("[Jj][Uu][Mm][']?[Aa][Tt]$",day):
-            return {id: 4,"day": "JUM'AT"}
+            return {'id': 4,"day": "JUM'AT"}
