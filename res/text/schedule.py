@@ -67,17 +67,18 @@ class Schedule():
             date = t[0].split('-')
             time = t[1].split(':')
             last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
-            if i == 0:
-                recent = last_update
-            elif day is not None:
+            
+            if day is not None:
                 exist = False
                 d = self.normalize(day)
-                if d['day'] == data['day'][1:len(data['day'])-1]:
+                if d['day'] == data['day']:
                     exist = True
                     user = data['user']
                     recent = last_update
                     msg = f"[{data['day']}]\n" + f"{data['subject']}\n\n"
                     break
+            elif i == 0:
+                recent = last_update
             elif last_update > recent:
                 recent = last_update
                 user = data['user']
