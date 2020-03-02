@@ -72,7 +72,7 @@ class Schedule():
             elif day is not None:
                 exist = False
                 d = self.normalize(day)
-                if d['day'] == data['day'][1:len(data['day']-1)]:
+                if d['day'] == data['day'][1:len(data['day'])-1]:
                     exist = True
                     user = data['user']
                     recent = last_update
