@@ -24,17 +24,17 @@ class Schedule():
         dayPattern = "([Ss][Ee][Nn][Ii][Nn]|[Ss][Ee][Ll][Aa][Ss][Aa]|[Rr][Aa][Bb][Uu]|[Kk][Aa][Mm][Ii][Ss]|[Jj][Uu][Mm][']?[Aa][Tt])$"
         msg = ""
         if re.match(".*\n+\[[A-Za-z']+\]\n+.*", self.event.message.text):
-            day = re.findall("\n\[[A-Za-z']+\]\n", self.event.message.text)
-            schedule = re.split("\n\[[A-Za-z']+\]\n", self.event.message.text)
+            day = re.findall("\n\[[A-Za-z']+\]\n?", self.event.message.text)
+            schedule = re.split("\n\[[A-Za-z']+\]\n?", self.event.message.text)
             i = 1
             end = len(day)
             for d in day:
                 Days = d[2:len(d)-2]
-                if re.match(dayPattern, Days) is None:
+                sc = schedule[i].strip()
+                if re.match(dayPattern, Days) is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
                     break
                 if i == 1:
                     d = d.lstrip()
-                sc = schedule[i].strip()
                 msg += d + sc
                 if i != end:
                     msg += '\n'
@@ -55,9 +55,43 @@ class Schedule():
 
     def getSchedule(self, day = None):
         mongo = db.schedule
-        if day == None:
-            schedule = mongo.find({})
+        i = 0
+        msg = ""
+        recent = None
+        for data in mongo.find({}).sort("id",1):
+            t = data['last_update'].split('t')
+            date = t[0].split('-')
+            time = t[1].split(':')
+            last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
+            if i == 0:
+                recent = last_update
+            elif day is not None:
+                exist = False
+                d = self.normalize(day)
+                if d['day'] == data['day'][1:len(data['day']-1)]:
+                    exist = True
+                    user = data['user']
+                    recent = last_update
+                    msg = f"[{data['day']}]\n" + f"{data['subject']}\n\n"
+                    break
+            elif last_update > recent:
+                recent = last_update
+                user = data['user']
+            msg += f"[{data['day']}]\n" + f"{data['subject']}\n\n"
+            i += 1
 
+        try:
+            if day is not None and not exist:
+                return
+            recent = recent.strftime("%D")
+            msg += f"\nLast updated on {recent}\nby {user}"
+        except NameError:
+            return
+
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            TextSendMessage(msg)
+        )
 
     def normalize(self, day):
         if re.match("[Ss][Ee][Nn][Ii][Nn]$",day):
