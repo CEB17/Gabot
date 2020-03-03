@@ -111,24 +111,27 @@ class Reminder():
             query = f"action=set-reminder&type={category}&text={msg[0].strip()}"
             forget = f"action=delete-reminder&type={category}&text={msg[0].strip()}"
 
-        prompt = TemplateSendMessage(
-            alt_text="Please set the date and time",
-            template=ConfirmTemplate(
-                text=f"Please set the date and time",
-                actions=[
-                    DatetimePickerAction(
-                        label="Set date",
-                        data=query,
-                        mode="datetime",initial=self.now, min=self.now, max=self.until
-                    ),
-                    PostbackAction(
-                        label="Forget it",
-                        data=forget,
-                        text="Nah, forget it."
-                    )
-                ]
+        try:
+            prompt = TemplateSendMessage(
+                alt_text="Please set the date and time",
+                template=ConfirmTemplate(
+                    text=f"Please set the date and time",
+                    actions=[
+                        DatetimePickerAction(
+                            label="Set date",
+                            data=query,
+                            mode="datetime",initial=self.now, min=self.now, max=self.until
+                        ),
+                        PostbackAction(
+                            label="Forget it",
+                            data=forget,
+                            text="Nah, forget it."
+                        )
+                    ]
+                )
             )
-        )
+        except UnboundLocalError:
+            return
 
         self.line_bot_api.reply_message(
             self.event.reply_token,
