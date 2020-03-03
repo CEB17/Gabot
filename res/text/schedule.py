@@ -1,5 +1,6 @@
 from linebot.models import (
-    TextSendMessage
+    TextSendMessage,
+    StickerSendMessage
 )
 from controllers.db import *
 from datetime import datetime
@@ -96,9 +97,15 @@ class Schedule():
             if day is not None and not exist:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
-                    TextSendMessage(
-                        "Umm... sorry, couldn't find it."
-                    )
+                    [
+                        StickerSendMessage(
+                            package_id=11537,
+                            sticker_id=52002754
+                        ),
+                        TextSendMessage(
+                          "Umm... sorry, couldn't find it."
+                        )
+                    ]
                 )
                 return
             recent = recent.strftime("%D")

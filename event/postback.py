@@ -46,8 +46,21 @@ class PostbackHandler():
             )
             return
 
-        if self.query['type'] == "event":            
-            msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
+        if self.query['type'] == "reminder":
+            msg = self.mongo.find_one({"uuid":self.query['id']},{"userId"})
+
+            if msg is None:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        text="Sorry, I couldn't find your message. Maybe it's already expired"
+                    )
+                )
+                return
+            elif self.event.source.user_id != msg['userId']:
+                return
+
+            msg = self.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
             if msg is None:
@@ -73,7 +86,7 @@ class PostbackHandler():
                             sticker_id="51626523"
                         ),
                         TextSendMessage(
-                            text="FYI, currently I can't update todo reminder date time. You need to 'forget' and then create a new one."
+                            text="FYI, currently I can't update todo reminder date&time. You need to 'forget' and then create a new one."
                         ),
                         TextSendMessage(
                             text="Pardon my foolishness"
@@ -127,7 +140,7 @@ class PostbackHandler():
                 break
 
     def updateReminder(self):
-        if self.query['type'] == "event":            
+        if self.query['type'] == "reminder":            
             msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "uuid":self.query['id']},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
@@ -135,7 +148,7 @@ class PostbackHandler():
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe you already set it or it's already expired"
+                        text="Sorry, I couldn't find your message. Maybe it's already expired"
                     )
                 )
                 return
@@ -165,7 +178,7 @@ class PostbackHandler():
             h.update(m.encode('utf-8'))
             id = h.hexdigest()
 
-        elif self.query['type'] == "event":
+        elif self.query['type'] == "reminder":
             id = self.query['id']
             
         self.mongo = db.reminder

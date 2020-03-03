@@ -9,7 +9,7 @@ from linebot.models import (
 from time import sleep
 from datetime import datetime, timedelta
 from controllers.db import *
-import pytz, re, uuid, hashlib
+import pytz, re, uuid, hashlib, os
 
 class Reminder():
     def __init__(self,event,line_bot_api):
@@ -20,56 +20,61 @@ class Reminder():
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
         self.until = datetime.now(region) + timedelta(60)
         self.until = self.until.strftime("%Y-%m-%dt%H:%M")
+        self.user = line_bot_api.get_profile(event.source.user_id)
+        if event.source.type == "user":
+            self.source_id = event.source.user_id
+        elif event.source.type == "group":
+            self.source_id = event.source.group_id
         self.uuid = str(uuid.uuid4())
 
-        msg = self.event.message.text.replace('\n','')
+        msg = self.event.message.text.strip()
 
-        if re.match(".*#[Rr]eminder.*", msg):
-            if re.match(".*#[Ee]vent.*", msg):
-                length = len(self.event.message.text.strip())
+        if re.match(".+\s[\n]*#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", msg):
+            msg = re.split("#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])", msg)
+            length = len(msg[0].strip())
+            msg[1] = msg[1].lower()
+            maxchar = 260
+            if msg[1] == "reminder" and event.source.type == "group":
                 maxchar = 1000
-                if length - 15 > maxchar:
-                    self.line_bot_api.reply_message(
-                        self.event.reply_token,
-                        TextSendMessage(
-                            text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
-                        )
-                    )
-                    return
-                self.addReminder("#[Ee]vent", "event")
-            elif re.match(".*#[Tt]odo.*", msg):
-                length = len(self.event.message.text.strip())
-                maxchar = 260
-                if length - 15 > maxchar:
-                    self.line_bot_api.reply_message(
-                        self.event.reply_token,
-                        TextSendMessage(
-                            text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
-                        )
-                    )
-                    return
-                self.addReminder("#[Tt]odo", "todo")
 
-    def addReminder(self, regex, category):
+            if re.search("[a-zA-Z]+", msg[0]) is None or length < 5:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    StickerSendMessage(
+                        package_id=11537
+                        sticker_id=52002763
+                    )
+                )
+                return
+            elif length > maxchar:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
+                    )
+                )
+                return
+            self.addReminder(msg, msg[1])
+        # elif re.match(".+\s[\n]*#([Tt][Oo][Dd][Oo])$", msg):
+        #     length = len(self.event.message.text.strip())
+        #     maxchar = 260
+        #     if length - 15 > maxchar:
+        #         self.line_bot_api.reply_message(
+        #             self.event.reply_token,
+        #             TextSendMessage(
+        #                 text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
+        #             )
+        #         )
+        #         return
+        #     self.addReminder("#[Tt]odo", "todo")
+
+    def addReminder(self, msg, category):
         self.mongo = db.reminder
-        msg = re.split(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",self.event.message.text)
 
-        if len(msg) < 3:
-            self.warning(category, "format")
-            return
-
-        elif re.search(f"(#[Rr]eminder\s{regex})|({regex}\s#[Rr]eminder)",msg[0].replace('\n','')) is not None:
-            self.warning(category, "format")
-            return
-        
-        elif re.match("^\s*$", msg[3]) is None:
-            self.warning(category, "format")
-            return
-
-        if category == "event":
+        if category == "reminder" and self.event.source.type == "group":
             count = 0
 
-            for data in self.mongo.find({"userId":self.event.source.user_id, "type":"event"},{"userId"}):
+            for data in self.mongo.find({"userId":self.source_id, "type":category},{"userId"}):
                 count = count + 1
 
             if count > 3:
@@ -77,8 +82,7 @@ class Reminder():
                 return
 
             data = {
-                "userId" : self.event.source.user_id,
-                "source" : self.event.source.type,
+                "userId" : self.source_id,
                 "type" : category,
                 "uuid" : self.uuid,
                 "created" : self.now,
@@ -90,9 +94,9 @@ class Reminder():
             query = f"action=set-reminder&type={category}&id={self.uuid}"
             forget = f"action=delete-reminder&type={category}&id={self.uuid}"
 
-        elif category == "todo":
+        elif category == "todo" and self.event.source.type == "user":
             h = hashlib.sha1()
-            m = self.event.source.user_id + msg[0].strip()
+            m = self.source_id + msg[0].strip()
             h.update(m.encode('utf-8'))
             self.uuid = h.hexdigest()
             data = {
@@ -131,7 +135,7 @@ class Reminder():
             prompt
         )
 
-        self.alert(self.uuid, self.event.source.user_id)
+        self.alert(self.uuid, self.source_id)
 
     def warning(self, category, error):
 
@@ -139,15 +143,16 @@ class Reminder():
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(
-                    text=f"[Incorrect format] Please put \"#reminder #{category}\" at the end of your message"
+                    text=f"[Incorrect format]\nPlease put \"#{category}\" on newline at the end of your message"
                 )
             )
 
         elif error == "limit":
+            user = self.line_bot_api.get_profile(self.event.source.user_id)
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(
-                    text=f"You can only set up to 3 {category} reminders to group, ask KY if you need help"
+                    text=f"@{self.user.display_name} can only set up to 3 reminders to group, ask another member to set it"
                 )
             )
 
@@ -168,7 +173,7 @@ class Reminder():
                         sticker_id="52002753"
                     ),
                     TextSendMessage(
-                        text="Sorry, you haven't set the date and time yet."
+                        text=f"Sorry @{self.user.display_name}, you haven't set the date and time yet."
                     )
                     ]
                 )

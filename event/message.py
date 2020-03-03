@@ -23,6 +23,7 @@ class MessageHandler():
                 else:
                     Member(event, line_bot_api)
                     Schedule(event, line_bot_api)
+                    Task(event,line_bot_api)
 
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
