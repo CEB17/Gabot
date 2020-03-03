@@ -74,7 +74,7 @@ class Reminder():
         if category == "reminder" and self.event.source.type == "group":
             count = 0
 
-            for data in self.mongo.find({"userId":self.source_id, "type":category},{"userId"}):
+            for data in self.mongo.find({"userId":self.event.source.user_id, "type":category},{"userId"}):
                 count = count + 1
 
             if count > 3:
@@ -82,7 +82,7 @@ class Reminder():
                 return
 
             data = {
-                "userId" : self.source_id,
+                "userId" : self.event.source.user_id,
                 "type" : category,
                 "uuid" : self.uuid,
                 "created" : self.now,

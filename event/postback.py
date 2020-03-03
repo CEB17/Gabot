@@ -16,6 +16,10 @@ class PostbackHandler():
         self.event = event
         self.line_bot_api = line_bot_api
         self.asia = pytz.timezone('Asia/Jakarta')
+        if event.source.type == "user":
+            self.source_id = event.source.user_id
+        elif event.source.type == "group":
+            self.source_id = event.source.group_id
 
         arr = []
         q = event.postback.data
@@ -67,7 +71,7 @@ class PostbackHandler():
                 self.updateReminder()
                 return
 
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
+            thread = Thread(target=self.sendReminder, args=[self.source_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         elif self.query['type'] == "todo":
             h = hashlib.sha1()
             m = self.event.source.user_id + self.query['text']
@@ -95,7 +99,7 @@ class PostbackHandler():
                 )
 
                 return
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
+            thread = Thread(target=self.sendReminder, args=[self.source_id, self.query['text'], self.event.postback.params['datetime'], data['uuid']])
 
         thread.start()
 
