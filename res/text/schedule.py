@@ -12,12 +12,14 @@ class Schedule():
         self.line_bot_api = line_bot_api
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
-        self.current = self.now.strftime("%d-%m-%Y %H:%M")
+        self.current = self.now.strftime("%D")
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
-        if re.match("/[Ss]et [Jj]adwal\n+\[[A-Za-z']{4,}\](\n)+", self.event.message.text):
+        if re.match("/[Ss]et [Jj]adwal\n+\[[A-Za-z']{4,7}\](\n)+", self.event.message.text):
             self.setSchedule()
-        elif re.match("\?[Jj]adwal($|\s[a-zA-Z]{4,}$)", self.event.message.text):
+        elif re.match("/[Uu]nset [Jj]adwal [A-Za-z']{4,7}$", self.event.message.text):
+            self.deleteSchedule()
+        elif re.match("\?[Jj]adwal($|\s[a-zA-Z]{4,7}$)", self.event.message.text):
             self.getSchedule()
 
     def setSchedule(self):
@@ -32,7 +34,7 @@ class Schedule():
                 Days = d[2:len(d)-2]
                 sc = schedule[i].strip()
                 if re.match(dayPattern, Days) is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
-                    break
+                    return
                 if i == 1:
                     d = d.lstrip()
                 msg += d + sc
@@ -40,7 +42,7 @@ class Schedule():
                     msg += '\n'
                 self.updateSchedule(Days, sc)
                 i += 1
-            msg += f"\n\nLast updated {self.current}\nby {self.user.display_name}"
+            msg += f"\n\nLast updated on {self.current}\nby {self.user.display_name}"
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(msg)
@@ -49,7 +51,9 @@ class Schedule():
     def updateSchedule(self, day, schedule):
         mongo = db.schedule
         Day = self.normalize(day)
-        mongo.find_one_and_update(
+        if Day is None:
+            return
+        mongo.update_one(
             {'day': Day['day']}, {'$set':{'id': Day['id'],'subject': schedule,'last_update': self.now, 'user': self.event.source.user_id}}, upsert=True
         )
 
@@ -71,7 +75,9 @@ class Schedule():
             if day is not None:
                 exist = False
                 d = self.normalize(day)
-                if d['day'] == data['day']:
+                if d is None:
+                    return
+                elif d['day'] == data['day']:
                     exist = True
                     user = data['user']
                     recent = last_update
@@ -97,6 +103,24 @@ class Schedule():
         self.line_bot_api.reply_message(
             self.event.reply_token,
             TextSendMessage(msg)
+        )
+
+    def deleteSchedule(self):
+        mongo = db.schedule
+        day = self.event.message.text.split(" ")[2]
+        day = self.normalize(day)
+        if day is None:
+            return
+        data = mongo.find_one_and_delete({'day': day['day']})
+        if data is None:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                "No data"
+            )
+            return
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            f"[{data['day']}]\n{data['subject']}\n\nRemoved by {self.user.display_name}"
         )
 
     def normalize(self, day):
