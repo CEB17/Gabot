@@ -15,15 +15,14 @@ class Schedule():
         self.current = self.now.strftime("%D")
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
-        if re.match("/[Ss]et [Jj]adwal\n+\[[A-Za-z']{4,7}\](\n)+", self.event.message.text):
+        if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
             self.setSchedule()
-        elif re.match("/[Uu]nset [Jj]adwal [A-Za-z']{4,7}$", self.event.message.text):
+        elif re.match("/[Uu]nset ([Jj]adwal|[Ss]chedule) [A-Za-z']{4,10}$", self.event.message.text):
             self.deleteSchedule()
-        elif re.match("\?[Jj]adwal($|\s[a-zA-Z]{4,7}$)", self.event.message.text):
+        elif re.match("\?([Jj]adwal|[Ss]chedule)($|\s[a-zA-Z]{4,10}$)", self.event.message.text):
             self.getSchedule()
 
     def setSchedule(self):
-        dayPattern = "([Ss][Ee][Nn][Ii][Nn]|[Ss][Ee][Ll][Aa][Ss][Aa]|[Rr][Aa][Bb][Uu]|[Kk][Aa][Mm][Ii][Ss]|[Jj][Uu][Mm][']?[Aa][Tt])$"
         msg = ""
         if re.match(".*\n+\[[A-Za-z']+\]\n+.*", self.event.message.text):
             day = re.findall("\n\[[A-Za-z']+\]\n?", self.event.message.text)
@@ -31,16 +30,18 @@ class Schedule():
             i = 1
             end = len(day)
             for d in day:
-                Days = d[2:len(d)-2]
                 sc = schedule[i].strip()
-                if re.match(dayPattern, Days) is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
+                Days = d[2:len(d)-2]
+                Days = self.normalize(Days)
+
+                if Days is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
                     return
                 if i == 1:
                     d = d.lstrip()
                 msg += d + sc
                 if i != end:
                     msg += '\n'
-                self.updateSchedule(Days, sc)
+                self.updateSchedule(Days['day'], sc)
                 i += 1
             msg += f"\n\nLast updated on {self.current}\nby {self.user.display_name}"
             self.line_bot_api.reply_message(
@@ -93,6 +94,12 @@ class Schedule():
 
         try:
             if day is not None and not exist:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        "Umm... sorry, couldn't find it."
+                    )
+                )
                 return
             recent = recent.strftime("%D")
             user = self.line_bot_api.get_profile(user)
@@ -115,22 +122,24 @@ class Schedule():
         if data is None:
             self.line_bot_api.reply_message(
                 self.event.reply_token,
-                "No data"
+                TextSendMessage("No data")
             )
             return
         self.line_bot_api.reply_message(
             self.event.reply_token,
-            f"[{data['day']}]\n{data['subject']}\n\nRemoved by {self.user.display_name}"
+            TextSendMessage(
+                f"[{data['day']}]\n{data['subject']}\n\nRemoved by {self.user.display_name}"
+            )
         )
 
     def normalize(self, day):
-        if re.match("[Ss][Ee][Nn][Ii][Nn]$",day):
+        if re.match("([Ss][Ee][Nn][Ii][Nn]|[Mm][Oo][Nn][Dd][Aa][Yy])$",day):
             return {'id': 0,"day": day.upper()}
-        elif re.match("[Ss][Ee][Ll][Aa][Ss][Aa]$",day):
+        elif re.match("([Ss][Ee][Ll][Aa][Ss][Aa]|[Tt][Uu][Ee][Ss][Dd][Aa][Yy])$",day):
             return {'id': 1,"day": day.upper()}
-        elif re.match("[Rr][Aa][Bb][Uu]$",day):
+        elif re.match("([Rr][Aa][Bb][Uu]|[Ww][Ee][Dd][Nn][Ee][Ss][Dd][Aa][Yy])$",day):
             return {'id': 2,"day": day.upper()}
-        elif re.match("[Kk][Aa][Mm][Ii][Ss]$",day):
+        elif re.match("([Kk][Aa][Mm][Ii][Ss]|[Tt][Hh][Uu][Rr][Ss][Dd][Aa][Yy])$",day):
             return {'id': 3,"day": day.upper()}
-        elif re.match("[Jj][Uu][Mm][']?[Aa][Tt]$",day):
+        elif re.match("([Jj][Uu][Mm][']?[Aa][Tt]|[Ff][Rr][Ii][Dd][Aa][Yy])$",day):
             return {'id': 4,"day": "JUM'AT"}
