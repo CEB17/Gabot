@@ -17,7 +17,7 @@ class Task():
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
 
-        if re.match(".+\s[\n]*#[Tt][Uu][Gg][Aa][Ss]$", self.event.message.text.strip()):
+        if re.match("(.+[\s\n]*)+\s#[Tt][Uu][Gg][Aa][Ss]$", self.event.message.text.strip()):
             length = len(event.message.text.strip())
             maxchar = 500
             if length - 10 > maxchar:

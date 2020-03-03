@@ -29,7 +29,7 @@ class Reminder():
 
         msg = self.event.message.text.strip()
 
-        if re.match(".+\s[\n]*#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", msg):
+        if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", msg):
             msg = re.split("#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])", msg)
             length = len(msg[0].strip())
             msg[1] = msg[1].lower()
@@ -176,7 +176,7 @@ class Reminder():
                         sticker_id="52002753"
                     ),
                     TextSendMessage(
-                        text=f"Sorry @{self.user.display_name}, you haven't set the date and time yet."
+                        text=f"Sorry @{self.user.display_name} , you haven't set the date and time yet."
                     )
                     ]
                 )
