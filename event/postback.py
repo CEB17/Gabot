@@ -57,7 +57,7 @@ class PostbackHandler():
             if self.event.source.user_id != msg['userId']:
                 return
 
-            msg = self.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
+            msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
             {"$set" : {"datetime":self.event.postback.params['datetime']}})
 
             if msg is None:
