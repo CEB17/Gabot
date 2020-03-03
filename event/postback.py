@@ -16,6 +16,7 @@ class PostbackHandler():
         self.event = event
         self.line_bot_api = line_bot_api
         self.asia = pytz.timezone('Asia/Jakarta')
+        self.user = line_bot_api.get_profile(event.source.user_id)
         if event.source.type == "user":
             self.source_id = event.source.user_id
         elif event.source.type == "group":
@@ -44,7 +45,7 @@ class PostbackHandler():
                         sticker_id="51626508"
                     ),
                     TextSendMessage(
-                        text="Duh, do you think I'm Dr.Strange? Don't make me laugh"
+                        text=f"Duh, do you think I'm Doctor Strange? Don't make me laugh @{self.user.display_name}"
                     )
                 ]
             )
@@ -53,15 +54,7 @@ class PostbackHandler():
         if self.query['type'] == "reminder":
             msg = self.mongo.find_one({"uuid":self.query['id']},{"userId"})
 
-            if msg is None:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
-                    TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe it's already expired"
-                    )
-                )
-                return
-            elif self.event.source.user_id != msg['userId']:
+            if self.event.source.user_id != msg['userId']:
                 return
 
             msg = self.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
@@ -152,7 +145,7 @@ class PostbackHandler():
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     TextSendMessage(
-                        text="Sorry, I couldn't find your message. Maybe it's already expired"
+                        text=f"Sorry @{self.user.display_name} , I couldn't find your message. Maybe it's already expired"
                     )
                 )
                 return
@@ -186,9 +179,11 @@ class PostbackHandler():
             id = self.query['id']
             
         self.mongo = db.reminder
-        amount = self.mongo.find_one({"uuid": id}, {"uuid"})
+        data = self.mongo.find_one({"uuid": id}, {"uuid","userId"})
 
-        if amount is None:
+        if self.event.source.user_id != data['userId']:
+            return
+        elif data is None:
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 TextSendMessage(
