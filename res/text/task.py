@@ -1,6 +1,6 @@
 from linebot.models import (
     TextSendMessage,
-    StickerSendMessage
+    StickerSendMessage,
     TemplateSendMessage,
     ConfirmTemplate,
     PostbackAction,
