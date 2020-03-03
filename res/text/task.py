@@ -25,8 +25,8 @@ class Task():
                     event.reply_token,
                     [
                         StickerSendMessage(
-                            package_id=11538,
-                            sticker_id=51626525
+                            package_id="11538",
+                            sticker_id="51626525"
                         ),
                         TextSendMessage(
                             text=f"H-Hold on!!! You have {length} characters, I couldn't receive more than {maxchar} characters."
@@ -42,8 +42,8 @@ class Task():
             self.line_bot_api.reply_message(
                 self.event.reply_token,
                 StickerSendMessage(
-                    package_id=11537
-                    sticker_id=52002763
+                    package_id="11537"
+                    sticker_id="52002763"
                 )
             )
             return

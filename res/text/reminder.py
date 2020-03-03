@@ -41,8 +41,8 @@ class Reminder():
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
                     StickerSendMessage(
-                        package_id=11537
-                        sticker_id=52002763
+                        package_id="11537",
+                        sticker_id="52002763"
                     )
                 )
                 return
