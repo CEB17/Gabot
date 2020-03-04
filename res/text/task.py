@@ -46,9 +46,10 @@ class Task():
                     ]
                 )
                 return
-            print("\n\n\n\nlength > maxchar\n\n\n")
-            print(length > maxchar)
-            print(length)
+            import logging
+            logging.info("length > maxchar")
+            logging.info(f"{length > maxchar}")
+            logging.info(f"{length}")
             self.addMemo(msg)
 
     def addMemo(self, msg):
