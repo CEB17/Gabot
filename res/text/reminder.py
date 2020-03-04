@@ -27,9 +27,9 @@ class Reminder():
             self.source_id = event.source.group_id
         self.uuid = str(uuid.uuid4())
 
-        msg = self.event.message.text.strip()
 
-        if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", msg):
+        if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", self.event.message.text.strip()):
+            msg = self.event.message.text.strip()
             msg = re.split("#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])", msg)
             length = len(msg[0].strip())
             msg[1] = msg[1].lower()

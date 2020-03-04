@@ -18,9 +18,21 @@ class Task():
         self.now = datetime.now(region)
 
         if re.match("(.+[\s\n]*)+\s#[Tt][Uu][Gg][Aa][Ss]$", self.event.message.text.strip()):
-            length = len(event.message.text.strip())
+            msg = self.event.message.text.strip()
+            msg = re.split("#([Tt][Uu][Gg][Aa][Ss])", msg)
+            length = len(msg[0].strip())
             maxchar = 500
-            if length - 10 > maxchar:
+
+            if re.search("[a-zA-Z]+", msg[0]) is None or length < 5:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    StickerSendMessage(
+                        package_id="11537",
+                        sticker_id="52002763"
+                    )
+                )
+                return
+            elif length > maxchar:
                 line_bot_api.reply_message(
                     event.reply_token,
                     [
@@ -34,16 +46,10 @@ class Task():
                     ]
                 )
                 return
-            self.addMemo()
+            print("\n\n\n\nlength > maxchar\n\n\n")
+            print(length > maxchar)
+            print(length)
+            self.addMemo(msg)
 
-    def addMemo(self):
-        msg = re.split("#([Tt][Uu][Gg][Aa][Ss])", self.event.message.text.strip())
-        if re.search("[a-zA-Z]+", msg[0]) is None or len(msg[0].strip()) < 5:
-            self.line_bot_api.reply_message(
-                self.event.reply_token,
-                StickerSendMessage(
-                    package_id="11537",
-                    sticker_id="52002763"
-                )
-            )
-            return
+    def addMemo(self, msg):
+        pass
