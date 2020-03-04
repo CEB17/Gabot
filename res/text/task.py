@@ -22,12 +22,18 @@ class Task():
         self.until = self.until.strftime("%Y-%m-%dt%H:%M")
         self.user = line_bot_api.get_profile(event.source.user_id)
 
+        import logging
+        logging.info("Entering TASK")
+
         if re.match("(.+[\s\n]*)+\s#([Tt][Uu][Gg][Aa][Ss])$", self.event.message.text.strip()):
+            logging.info("Word is MATCH with TASK")
             msg = self.event.message.text.strip()
             msg = re.split("#([Tt][Uu][Gg][Aa][Ss])", msg)
             length = len(msg[0].strip())
             msg[1] = msg[1].lower()
             maxchar = 500
+            logging.info(f"length > maxchar")
+            logging.info(f"{length > maxchar}")
 
             if re.search("[a-zA-Z]+", msg[0]) is None or length < 5:
                 self.line_bot_api.reply_message(
