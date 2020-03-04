@@ -16,11 +16,17 @@ class Schedule():
         self.current = self.now.strftime("%D")
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
+        import logging
+        logging.info("Enter SCHEDULE")
+
         if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
+            logging.info("setJadwal")
             self.setSchedule()
         elif re.match("/[Uu]nset ([Jj]adwal|[Ss]chedule) [A-Za-z']{4,10}$", self.event.message.text):
+            logging.info("unset Jadwal")
             self.deleteSchedule()
         elif re.match("\?([Jj]adwal|[Ss]chedule)($|\s[a-zA-Z]{4,10}$)", self.event.message.text):
+            logging.info("?Jadwal")
             self.getSchedule()
 
     def setSchedule(self):
