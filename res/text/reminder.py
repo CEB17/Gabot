@@ -27,8 +27,11 @@ class Reminder():
             self.source_id = event.source.group_id
         self.uuid = str(uuid.uuid4())
 
+        import logging
+        logging.info("Enter REMINDER")
 
         if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", self.event.message.text.strip()):
+            logging.info("MATCH with REMINDER")
             msg = self.event.message.text.strip()
             msg = re.split("#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])", msg)
             length = len(msg[0].strip())
