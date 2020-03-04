@@ -23,6 +23,11 @@ class Task():
             length = len(msg[0].strip())
             maxchar = 500
 
+            import logging
+            logging.info("length > maxchar")
+            logging.info(f"{length > maxchar}")
+            logging.info(f"{length}")
+
             if re.search("[a-zA-Z]+", msg[0]) is None or length < 5:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
@@ -35,25 +40,12 @@ class Task():
             elif length > maxchar:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
-                    [
-                        StickerSendMessage(
-                            package_id="11538",
-                            sticker_id="51626525"
-                        ),
-                        TextSendMessage(
-                            text=f"H-Hold on!!! You have {length} characters, I couldn't receive more than {maxchar} characters."
-                        )
-                    ]
+                    TextSendMessage(
+                        "what the...."
+                    )
                 )
-                import logging
-                logging.info("length > maxchar")
-                logging.info(f"{length > maxchar}")
-                logging.info(f"{length}")
                 return
-            import logging
-            logging.info("length > maxchar")
-            logging.info(f"{length > maxchar}")
-            logging.info(f"{length}")
+
             self.addMemo(msg)
 
     def addMemo(self, msg):
