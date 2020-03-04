@@ -33,8 +33,8 @@ class Task():
                 )
                 return
             elif length > maxchar:
-                line_bot_api.reply_message(
-                    event.reply_token,
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
                     [
                         StickerSendMessage(
                             package_id="11538",
@@ -45,6 +45,10 @@ class Task():
                         )
                     ]
                 )
+                import logging
+                logging.info("length > maxchar")
+                logging.info(f"{length > maxchar}")
+                logging.info(f"{length}")
                 return
             import logging
             logging.info("length > maxchar")
