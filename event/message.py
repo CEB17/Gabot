@@ -30,8 +30,6 @@ class MessageHandler():
                     Reminder(event, line_bot_api)
                     logging.info("Enter SCHEDULE")
                     Schedule(event, line_bot_api)
-                    logging.info("Enter TASK")
-                    Task(event,line_bot_api)
 
             elif event.source.type == "user":
                 Greet(event, line_bot_api)

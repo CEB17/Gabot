@@ -9,6 +9,7 @@ from linebot.models import (
 from time import sleep
 from datetime import datetime, timedelta
 from controllers.db import *
+from task import *
 import pytz, re, uuid, hashlib, os
 
 class Reminder():
@@ -27,7 +28,7 @@ class Reminder():
             self.source_id = event.source.group_id
         self.uuid = str(uuid.uuid4())
 
-        if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", self.event.message.text.strip()):
+        if re.match("(.+[\s\n]*)+\s#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])$", event.message.text):
             msg = self.event.message.text.strip()
             msg = re.split("#([Rr][Ee][Mm][Ii][Nn][Dd][Ee][Rr]|[Tt][Oo][Dd][Oo])", msg)
             length = len(msg[0].strip())
@@ -54,18 +55,9 @@ class Reminder():
                 )
                 return
             self.addReminder(msg, msg[1])
-        # elif re.match(".+\s[\n]*#([Tt][Oo][Dd][Oo])$", msg):
-        #     length = len(self.event.message.text.strip())
-        #     maxchar = 260
-        #     if length - 15 > maxchar:
-        #         self.line_bot_api.reply_message(
-        #             self.event.reply_token,
-        #             TextSendMessage(
-        #                 text=f"Uh, sorry. You have {length} characters, I couldn't receive more than {maxchar} characters."
-        #             )
-        #         )
-        #         return
-        #     self.addReminder("#[Tt]odo", "todo")
+        else:
+            Task(event,line_bot_api)
+
 
     def addReminder(self, msg, category):
         self.mongo = db.reminder
