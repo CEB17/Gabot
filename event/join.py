@@ -1,7 +1,9 @@
+# Module for Line SDK
 from linebot.models import (
     TextSendMessage,
     StickerSendMessage
 )
+# Module for OS and Regex stuff
 import os, re
 
 class JoinHandler():

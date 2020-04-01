@@ -1,10 +1,10 @@
 from __future__ import unicode_literals #backward compatibility for python2
-
+# Module for os or system related stuff
 import os, sys
-
+# Module for building server
 from flask import Flask, request, abort
 from router.router import *
-
+# Module for Line SDK
 from linebot import (
     LineBotApi, WebhookParser
 )
@@ -14,14 +14,14 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-
+# Create application server
 app = Flask(__name__)
 
-#Environment variabel
+# Environment variabel
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None) 
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
 
-#Handler
+# Handler
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
@@ -29,13 +29,13 @@ if channel_access_token is None:
     print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
     sys.exit(1)
 
-#Init API and Webhook
+# Init API and Webhook
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
-#Router
+# Router
 router(app, parser, line_bot_api)
 
-#Main
+# Run server
 if __name__ == "__main__":
     app.run(debug=True, port=os.getenv('PORT', None))

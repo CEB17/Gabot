@@ -54,7 +54,7 @@ class Reminder():
                 )
                 return
             self.addReminder(msg, msg[1])
-        elif re.match("/list reminder$", event.message.text) and event.source.type == "group":
+        elif re.match("\?[Rr]eminder$", event.message.text) and event.source.type == "group":
             self.listReminder()
 
     def addReminder(self, msg, category):

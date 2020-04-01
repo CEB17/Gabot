@@ -72,7 +72,7 @@ class Schedule():
             t = data['last_update'].split('t')
             date = t[0].split('-')
             time = t[1].split(':')
-            last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
+            last_update = f"{date[2]}/{date[1]}/{date[0]}"
             
             if day is not None:
                 exist = False
