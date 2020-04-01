@@ -136,9 +136,10 @@ class Reminder():
         for i in data:
             user = self.line_bot_api.get_profile(i['userId'])
             str += f"From {user.display_name}\n"
-            t = i['datetime'].split('T')
-            date = t[0].split('-')
-            i['datetime'] = f"{date[2]}-{date[1]}-{date[0]}T{t[1]}"
+            if i['datetime'] != "unset":
+                t = i['datetime'].split('T')
+                date = t[0].split('-')
+                i['datetime'] = f"{date[2]}-{date[1]}-{date[0]}T{t[1]}"
             str += f"Due {i['datetime']}\n"
             str += f"{i['text']}\n\n"
         
