@@ -9,7 +9,6 @@ from linebot.models import (
 from time import sleep
 from datetime import datetime, timedelta
 from controllers.db import *
-from task import *
 import pytz, re, uuid, hashlib, os
 
 class Reminder():
