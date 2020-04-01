@@ -72,7 +72,7 @@ class Schedule():
             t = data['last_update'].split('t')
             date = t[0].split('-')
             time = t[1].split(':')
-            last_update = f"{date[2]}/{date[1]}/{date[0]}"
+            last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
             
             if day is not None:
                 exist = False
@@ -109,6 +109,8 @@ class Schedule():
                 )
                 return
             recent = recent.strftime("%D")
+            date = recent.split('/')
+            recent = f"{date[1]}/{date[0]}/{date[2]}"
             user = self.line_bot_api.get_profile(user)
             msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:
