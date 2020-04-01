@@ -54,7 +54,7 @@ class PostbackHandler():
         if self.query['type'] == "reminder":
             msg = self.mongo.find_one({"uuid":self.query['id']},{"userId"})
 
-            if self.event.source.user_id != msg['userId']:
+            if msg is None or self.event.source.user_id != msg['userId']:
                 return
 
             msg = self.mongo.find_one_and_update({"userId":self.event.source.user_id, "datetime":"unset", "uuid":self.query['id']},
