@@ -14,6 +14,8 @@ class Schedule():
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
         self.current = self.now.strftime("%D")
+        date = self.current.split('/')
+        self.current = f"{date[1]}/{date[0]}/{date[2]}"        
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
         if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
