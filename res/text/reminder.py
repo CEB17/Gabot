@@ -54,9 +54,6 @@ class Reminder():
                 )
                 return
             self.addReminder(msg, msg[1])
-        else:
-            Task(event,line_bot_api)
-
 
     def addReminder(self, msg, category):
         self.mongo = db.reminder
