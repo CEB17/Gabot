@@ -134,7 +134,7 @@ class Reminder():
         data = self.mongo.find({"type": "reminder"}, {"userId","text","datetime"})
         str = ""
         for i in data:
-            user = self.line_bot_api.get_profile(i['user_id'])
+            user = self.line_bot_api.get_profile(i['userId'])
             str += f"From {user.display_name}\n"
             str += f"Due {i['datetime']}\n"
             str += f"{i['text']}\n\n"
