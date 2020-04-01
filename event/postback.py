@@ -150,7 +150,7 @@ class PostbackHandler():
                 )
                 return
 
-            thread = Thread(target=self.sendReminder, args=[self.event.source.user_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
+            thread = Thread(target=self.sendReminder, args=[self.source_id, msg['text'], self.event.postback.params['datetime'], self.query['id']])
         
         # Currently not support update Todo Reminder
         # elif self.query['type'] == "todo":
