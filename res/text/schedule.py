@@ -13,9 +13,7 @@ class Schedule():
         self.line_bot_api = line_bot_api
         region = pytz.timezone("Asia/Jakarta")
         self.now = datetime.now(region)
-        self.current = self.now.strftime("%D")
-        date = self.current.split('/')
-        self.current = f"{date[1]}/{date[0]}/{date[2]}"        
+        self.current = self.now.strftime("%d/%m/%Y")
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
 
         if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
@@ -110,9 +108,7 @@ class Schedule():
                     ]
                 )
                 return
-            recent = recent.strftime("%D")
-            date = recent.split('/')
-            recent = f"{date[1]}/{date[0]}/{date[2]}"
+            recent = recent.strftime("%d/%m/%Y")
             user = self.line_bot_api.get_profile(user)
             msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:

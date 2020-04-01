@@ -35,7 +35,7 @@ def handler(app,parser,line_bot_api):
         events = parser.parse(body, signature)
     except InvalidSignatureError:
         abort(400)
-    # Start threading
+    # Multi threading
     sleep(0.01)
     thread = threading.Thread(target=eventHandler, args=[app, events,line_bot_api])
     thread.start()
