@@ -54,6 +54,8 @@ class Reminder():
                 )
                 return
             self.addReminder(msg, msg[1])
+        elif re.match("/list reminder$", event.message.text) and event.source.type == "group":
+            self.listReminder()
 
     def addReminder(self, msg, category):
         self.mongo = db.reminder
@@ -126,6 +128,39 @@ class Reminder():
         )
 
         self.alert(self.uuid, self.source_id)
+
+    def listReminder(self):
+        self.mongo = db.reminder
+        data = self.mongo.find({"type": "reminder"}, {"userId","text","datetime"})
+        str = ""
+        for i in data:
+            user = self.line_bot_api.get_profile(i['user_id'])
+            str += f"From {user.display_name}\n"
+            str += f"Due {i['datetime']}\n"
+            str += f"{i['text']}\n\n"
+        
+        if len(str) == 0:
+            self.line_bot_api.reply_message(
+                self.event.reply_token,
+                [
+                    StickerSendMessage(
+                        package_id="11539",
+                        sticker_id="52114121"
+                    ),
+                    TextSendMessage(
+                        text=f"There is no reminder yet."
+                    )
+                ]
+            )
+            return
+
+        self.line_bot_api.reply_message(
+            self.event.reply_token,
+            TextSendMessage(
+                str
+            )
+        )
+
 
     def warning(self, category, error):
 
