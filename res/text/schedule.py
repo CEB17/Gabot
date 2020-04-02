@@ -99,7 +99,9 @@ class Schedule():
         msg = ""
         recent = None
         # Iterate data and sort by ID ascending
+        print("Getting schedule")
         for data in mongo.find({}).sort("id",1):
+            print(data)
             # Tokenizing
             t = data['last_update'].split('t')
             date = t[0].split('-')
@@ -108,6 +110,7 @@ class Schedule():
             last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
             
             if day != None:
+                print("day is not None")
                 exist = False
                 # Check if day is valid
                 d = self.normalize(day)
@@ -133,7 +136,7 @@ class Schedule():
             # Get schedule
             msg += f"[{data['day']}]\n" + f"{data['subject']}\n\n"
             i += 1
-
+        print(msg)
         try:
             if day is not None and not exist:
                 self.line_bot_api.reply_message(
