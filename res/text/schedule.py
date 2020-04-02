@@ -99,11 +99,7 @@ class Schedule():
         msg = ""
         recent = None
         # Iterate data and sort by ID ascending
-        print("Day is",day)
-        print("Getting schedule")
         for data in mongo.find({}).sort("id",1):
-            user = data['user']
-            print(data)
             # Tokenizing
             t = data['last_update'].split('t')
             date = t[0].split('-')
@@ -113,7 +109,6 @@ class Schedule():
             
             if day != None:
                 exist = False
-                print("day is not None")
                 # Check if day is valid
                 d = self.normalize(day)
                 if d is None:
@@ -131,17 +126,15 @@ class Schedule():
             elif i == 0:
                 # Save current update time to compare later
                 recent = last_update
-            # Comparing update time to show the latest update time
+                user = data['user']
+           # Comparing update time to show the latest update time
             elif last_update > recent:
                 recent = last_update
                 user = data['user']
             # Get schedule
             msg += f"[{data['day']}]\n" + f"{data['subject']}\n\n"
             i += 1
-        print(msg)
         try:
-            print("Trying . . . .")
-            print("day is",day)
             if day is not None and not exist:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
@@ -162,11 +155,8 @@ class Schedule():
             user = self.line_bot_api.get_profile(user)
             msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError as detail:
-            print("NameError")
-            print(detail)
             return
         # Send list of schedule
-        print('Reply message')
         self.line_bot_api.reply_message(
             self.event.reply_token,
             TextSendMessage(msg)
