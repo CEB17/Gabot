@@ -34,6 +34,8 @@ class MessageHandler():
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
                 Reminder(event, line_bot_api)
+                
+            Help(event,line_bot_api)
         # Image message handler --TBD--
         elif isinstance(event.message, ImageMessage):
             message_id = event.message.id
