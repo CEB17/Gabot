@@ -35,6 +35,7 @@ class Schedule():
             self.getSchedule()
 
     def setSchedule(self):
+        print("Set schedule")
         msg = ""
         if re.match(".*\n+\[[A-Za-z']+\]\n+.*", self.event.message.text):
             # Find matched day
@@ -49,25 +50,33 @@ class Schedule():
                     )
                 )
                 return
+            print("Day", day)
+            print("Schedule", schedule)
             # Iterate day
             for d in day:
-                # Trim excessive whitespace
+              print("Iterating day")
+              # Trim excessive whitespace
                 sc = schedule[1].strip()
                 # Remove unnecessary symbol
                 Days = d[2:len(d)-2]
                 # Check if day is valid
                 Days = self.normalize(Days)
+                print("Normalized day", Days)
                 # If not match
                 if Days is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
+                    print("STOPPED")
                     return
                 # Trim excessive whitespace
                 d = d.lstrip()
                 # Concate string
                 msg += d + sc
+                print("MSG", msg)
                 # Create/Update schedule
                 self.updateSchedule(Days['day'], sc)
+                print("Updated schedule")
             # Respond
             msg += f"\n\nLast updated on {self.current}\nby {self.user.display_name}"
+            print("MSG", msg)
             # Send respond
             self.line_bot_api.reply_message(
                 self.event.reply_token,
@@ -79,6 +88,9 @@ class Schedule():
         mongo = db.schedule
         # Check if day is valid
         Day = self.normalize(day)
+        print("day is",day)
+        print("schedule is",schedule)
+        print("2nd normalized day", Day)
         # If not valid
         if Day is None:
             return
