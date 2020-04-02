@@ -109,10 +109,10 @@ class Schedule():
             time = t[1].split(':')
             # Set datetime format
             last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
+            exist = False
             
             if day != None:
                 print("day is not None")
-                exist = False
                 # Check if day is valid
                 d = self.normalize(day)
                 if d is None:
