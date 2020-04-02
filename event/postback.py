@@ -223,8 +223,9 @@ class PostbackHandler():
         # Find one data that match parameter
         data = self.mongo.find_one({"uuid": id}, {"uuid","userId"})
         # If source doesn't match with data
-        if self.event.source.user_id != data['userId']:
-            return
+        if self.event.source.type == "group":
+            if self.event.source.user_id != data['userId']:
+                return
         # If data is not found
         elif data is None:
             # Reply chat
