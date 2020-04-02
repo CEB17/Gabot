@@ -90,7 +90,7 @@ class Help():
             msg = self.reminderHelp(True) + '\n\n'
             msg += self.memberHelp(True) + '\n\n'
             msg += self.scheduleHelp(True)
-            
+
         if msg is None:
             return
         # Reply chat and trim whitespace
@@ -101,21 +101,32 @@ class Help():
     def memberHelp(self, textonly=None):
         msg = '''[Member Commands]
 * Find NRP
-command: ?nrp --nickname--
-example: ?nrp john
-response: "2210171000"
+command:
+?nrp --nickname--
+example:
+?nrp john
+response:
+"2210171000"
 
 * Find name based on NRP
-command: ?nrp --number--
-example 1: ?nrp 00
-example 2: ?nrp 1700
-example 3: ?nrp 2210171000
-response: "John Doe"
+command:
+?nrp --number--
+example 1:
+?nrp 00
+example 2:
+?nrp 1700
+example 3:
+?nrp 2210171000
+response:
+"John Doe"
 
 * Find fullname member
-command: ?fullname --nickname--
-example: ?fullname john
-response: "John Doe"
+command:
+?fullname --nickname--
+example:
+?fullname john
+response:
+"John Doe"
 '''
         if textonly:
             return msg.strip()
@@ -128,9 +139,12 @@ response: "John Doe"
         if self.event.source.type == "user":
             msg = '''[Reminder Commands]
 * Create reminder
-command: --your reminder-- #todo
-example: Meetup at 7PM #todo
-response: (You will be asked to set the date and time)
+command:
+--your reminder-- #todo
+example:
+Meetup at 7PM #todo
+response:
+(You will be asked to set the date and time)
 
 #Note:
 You can only set reminder up to 260 characters
@@ -138,9 +152,12 @@ You can only set reminder up to 260 characters
         elif self.event.source.type == "group":
             msg = '''[Reminder Commands]
 * Create reminder
-command: --your reminder-- #reminder
-example: Class would be postponed until 11AM #reminder
-response: (You will be asked to set the date and time)
+command:
+--your reminder-- #reminder
+example:
+Class would be postponed until 11AM #reminder
+response:
+(You will be asked to set the date and time)
 
 #Note:
 You can only set reminder up to 1000 characters
@@ -181,8 +198,10 @@ Can only set 1 schedule per message,
 You need to send 5 messages to set schedule for 5 different days
 
 * Delete Schedule
-command: "/unset jadwal --day--"
-example: "/unset jadwal rabu"
+command:
+"/unset jadwal --day--"
+example:
+"/unset jadwal rabu"
 response:
 [RABU]
 Teori
@@ -191,7 +210,8 @@ Praktikum
 Removed by --username--
 
 * Show schedule
-command 1: ?jadwal
+command 1:
+?jadwal
 response:
 [SENIN]
 --schedule--
@@ -201,8 +221,10 @@ response:
 
 ....
 
-command 2: ?jadwal --day--
-example: ?jadwal kamis
+command 2:
+?jadwal --day--
+example:
+?jadwal kamis
 response:
 [KAMIS]
 Teori
