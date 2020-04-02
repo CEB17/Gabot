@@ -41,13 +41,18 @@ class Schedule():
             day = re.findall("\n\[[A-Za-z']+\]\n?", self.event.message.text)
             # Tokenizing
             schedule = re.split("\n\[[A-Za-z']+\]\n?", self.event.message.text)
-            i = 1
-            # Count matched day
-            end = len(day)
+            if len(day) > 1:
+                self.line_bot_api.reply_message(
+                    self.event.reply_token,
+                    TextSendMessage(
+                        "[FAIL] I can only set 1 schedule per message"
+                    )
+                )
+                return
             # Iterate day
             for d in day:
                 # Trim excessive whitespace
-                sc = schedule[i].strip()
+                sc = schedule[1].strip()
                 # Remove unnecessary symbol
                 Days = d[2:len(d)-2]
                 # Check if day is valid
@@ -56,16 +61,11 @@ class Schedule():
                 if Days is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
                     return
                 # Trim excessive whitespace
-                if i == 1:
-                    d = d.lstrip()
+                d = d.lstrip()
                 # Concate string
                 msg += d + sc
-                # Add newline if it's not last line
-                if i != end:
-                    msg += '\n'
                 # Create/Update schedule
                 self.updateSchedule(Days['day'], sc)
-                i += 1
             # Respond
             msg += f"\n\nLast updated on {self.current}\nby {self.user.display_name}"
             # Send respond
