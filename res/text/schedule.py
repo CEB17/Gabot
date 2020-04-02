@@ -25,10 +25,9 @@ class Schedule():
         self.current = self.now.strftime("%d/%m/%Y")
         # Time format to save on DB
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
-        print("Entering Schedule handler")
+
         # If text message content match with regex pattern
         if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
-            print("Run set schedule")
             self.setSchedule()
         elif re.match("/[Uu]nset ([Jj]adwal|[Ss]chedule) [A-Za-z']{4,10}$", self.event.message.text):
             self.deleteSchedule()
@@ -36,48 +35,39 @@ class Schedule():
             self.getSchedule()
 
     def setSchedule(self):
-        print("Set schedule")
         msg = ""
         if re.match(".*\n+\[[A-Za-z']+\]\n+.*", self.event.message.text):
             # Find matched day
             day = re.findall("\n\[[A-Za-z']+\]\n?", self.event.message.text)
             # Tokenizing
             schedule = re.split("\n\[[A-Za-z']+\]\n?", self.event.message.text)
-            print("Day", day)
-            print("Schedule", schedule)
-            if len(day) > 1:
-                self.line_bot_api.reply_message(
-                    self.event.reply_token,
-                    TextSendMessage(
-                        "[FAIL] I can only set 1 schedule per message"
-                    )
-                )
-                return
+            i = 1
+            # Count matched day
+            end = len(day)
             # Iterate day
             for d in day:
-                print("Iterating day")
-              # Trim excessive whitespace
-                sc = schedule[1].strip()
+                # Trim excessive whitespace
+                sc = schedule[i].strip()
                 # Remove unnecessary symbol
                 Days = d[2:len(d)-2]
                 # Check if day is valid
                 Days = self.normalize(Days)
-                print("Normalized day", Days)
                 # If not match
                 if Days is None or re.match("([a-zA-Z'\-]+(\s)?)+", sc) is None:
-                    print("STOPPED")
                     return
                 # Trim excessive whitespace
-                d = d.lstrip()
+                if i == 1:
+                    d = d.lstrip()
                 # Concate string
                 msg += d + sc
-                print("MSG", msg)
+                # Add newline if it's not last line
+                if i != end:
+                    msg += '\n'
                 # Create/Update schedule
                 self.updateSchedule(Days['day'], sc)
-                print("Updated schedule")
+                i += 1
             # Respond
             msg += f"\n\nLast updated on {self.current}\nby {self.user.display_name}"
-            print("MSG", msg)
             # Send respond
             self.line_bot_api.reply_message(
                 self.event.reply_token,
@@ -89,9 +79,6 @@ class Schedule():
         mongo = db.schedule
         # Check if day is valid
         Day = self.normalize(day)
-        print("day is",day)
-        print("schedule is",schedule)
-        print("2nd normalized day", Day)
         # If not valid
         if Day is None:
             return
