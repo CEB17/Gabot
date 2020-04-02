@@ -96,7 +96,7 @@ Sure, I'll help your group
             return
         self.line_bot_api.reply_message(
             self.event.reply_token,
-            msg
+            TextSendMessage(msg)
         )            
     # def memberHelp(self):
     #     self.line_bot_api.reply_message(
