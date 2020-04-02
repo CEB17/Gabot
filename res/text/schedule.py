@@ -153,7 +153,7 @@ class Schedule():
             recent = recent.strftime("%d/%m/%Y")
             # Get user data
             user = self.line_bot_api.get_profile(user)
-            msg += f"Last updated on {recent}\nby {user.disComparing play_name}"
+            msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:
             return
         # Send list of schedule
