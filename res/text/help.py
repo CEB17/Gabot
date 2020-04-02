@@ -199,9 +199,9 @@ You need to send 5 messages to set schedule for 5 different days
 
 * Delete Schedule
 command:
-"/unset jadwal --day--"
+/unset jadwal --day--
 example:
-"/unset jadwal rabu"
+/unset jadwal rabu
 response:
 [RABU]
 Teori
