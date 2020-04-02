@@ -102,6 +102,7 @@ class Schedule():
         print("Day is",day)
         print("Getting schedule")
         for data in mongo.find({}).sort("id",1):
+            user = data['user']
             print(data)
             # Tokenizing
             t = data['last_update'].split('t')
