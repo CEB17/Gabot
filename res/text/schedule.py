@@ -25,9 +25,10 @@ class Schedule():
         self.current = self.now.strftime("%d/%m/%Y")
         # Time format to save on DB
         self.now = self.now.strftime("%Y-%m-%dt%H:%M")
-
+        print("Entering Schedule handler")
         # If text message content match with regex pattern
         if re.match("/[Ss]et ([Jj]adwal|[Ss]chedule)\n+\[[A-Za-z']{4,10}\](\n)+", self.event.message.text):
+            print("Run set schedule")
             self.setSchedule()
         elif re.match("/[Uu]nset ([Jj]adwal|[Ss]chedule) [A-Za-z']{4,10}$", self.event.message.text):
             self.deleteSchedule()
@@ -42,6 +43,8 @@ class Schedule():
             day = re.findall("\n\[[A-Za-z']+\]\n?", self.event.message.text)
             # Tokenizing
             schedule = re.split("\n\[[A-Za-z']+\]\n?", self.event.message.text)
+            print("Day", day)
+            print("Schedule", schedule)
             if len(day) > 1:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
@@ -50,8 +53,6 @@ class Schedule():
                     )
                 )
                 return
-            print("Day", day)
-            print("Schedule", schedule)
             # Iterate day
             for d in day:
                 print("Iterating day")
