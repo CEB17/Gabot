@@ -54,7 +54,7 @@ class Schedule():
             print("Schedule", schedule)
             # Iterate day
             for d in day:
-              print("Iterating day")
+                print("Iterating day")
               # Trim excessive whitespace
                 sc = schedule[1].strip()
                 # Remove unnecessary symbol
