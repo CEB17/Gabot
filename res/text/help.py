@@ -85,8 +85,10 @@ class Help():
     def showCommand(self):
         msg = None
         if self.event.source.type == "user":
+            # Return string
             msg = self.reminderHelp(True)
         elif self.event.source.type == "group":
+            # Return string
             msg = self.reminderHelp(True) + '\n\n'
             msg += self.memberHelp(True) + '\n\n'
             msg += self.scheduleHelp(True)
