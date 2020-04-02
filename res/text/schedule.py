@@ -109,9 +109,9 @@ class Schedule():
             time = t[1].split(':')
             # Set datetime format
             last_update = datetime(int(date[0]),int(date[1]),int(date[2]),int(time[0]),int(time[1]))
-            exist = False
             
             if day != None:
+                exist = False
                 print("day is not None")
                 # Check if day is valid
                 d = self.normalize(day)
@@ -160,9 +160,9 @@ class Schedule():
             # Get user data
             user = self.line_bot_api.get_profile(user)
             msg += f"Last updated on {recent}\nby {user.display_name}"
-        except NameError:
+        except NameError as detail:
             print("NameError")
-            print(NameError)
+            print(detail)
             return
         # Send list of schedule
         print('Reply message')
