@@ -162,6 +162,7 @@ class Schedule():
             msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:
             print("NameError")
+            print(NameError)
             return
         # Send list of schedule
         print('Reply message')
