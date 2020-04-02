@@ -138,6 +138,7 @@ class Schedule():
             i += 1
         print(msg)
         try:
+            print("Trying . . . .")
             if day is not None and not exist:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
@@ -158,8 +159,10 @@ class Schedule():
             user = self.line_bot_api.get_profile(user)
             msg += f"Last updated on {recent}\nby {user.display_name}"
         except NameError:
+            print("NameError")
             return
         # Send list of schedule
+        print('Reply message')
         self.line_bot_api.reply_message(
             self.event.reply_token,
             TextSendMessage(msg)
