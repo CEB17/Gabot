@@ -99,6 +99,7 @@ class Schedule():
         msg = ""
         recent = None
         # Iterate data and sort by ID ascending
+        print("Day is",day)
         print("Getting schedule")
         for data in mongo.find({}).sort("id",1):
             print(data)
@@ -139,6 +140,7 @@ class Schedule():
         print(msg)
         try:
             print("Trying . . . .")
+            print("day is",day)
             if day is not None and not exist:
                 self.line_bot_api.reply_message(
                     self.event.reply_token,
