@@ -27,9 +27,9 @@ class MessageHandler():
                 if botname in event.message.text:
                     Greet(event, line_bot_api, botname)
                 else:
+                    Schedule(event, line_bot_api)
                     Member(event, line_bot_api)
                     Reminder(event, line_bot_api)
-                    Schedule(event, line_bot_api)
             # If message comes from personal chat
             elif event.source.type == "user":
                 Greet(event, line_bot_api)
