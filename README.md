@@ -4,8 +4,8 @@
 
 This bot born based on that reason, where most of our problems are the cause of our laziness and selfishness. We tend to forget things, but what much worse is, when one who remember doesn't tell the other despite the one is assumming that the other already remember. It's not happen all the time, though. Gabot is here to give a little help and regardless of its imperfection, gabot would try its best to prevent you being forgetful.
 
-* #### [How to use]()
-* #### [How to contribute]()
+* #### [How to use](https://github.com/CEB2017/Gabot/wiki/How-to-use)
+* #### [How to contribute](https://github.com/CEB2017/Gabot/wiki/How-to-contribute)
 
 ## What does it do?
 
