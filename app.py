@@ -20,17 +20,18 @@ from linebot.models import (
 )
 
 # Prevent heroku from idling
-def keepAlive(second):
+def keepAlive():
     while 1:
         with urllib.request.urlopen(os.getenv('HOST_URL', None)) as response:
             html = response.read()
-            sleep(second)
+            print('PING')
+            sleep(1)
 
 # Create application server
 app = Flask(__name__)
 
 # Start thread to ping server
-thread = threading.Thread(target=keepAlive, args=[60])
+thread = threading.Thread(target=keepAlive)
 thread.start()
 
 # Environment variabel
