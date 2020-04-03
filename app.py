@@ -24,8 +24,7 @@ def keepAlive():
     while 1:
         with urllib.request.urlopen(os.getenv('HOST_URL', None)) as response:
             html = response.read()
-            print('PING')
-            sleep(1)
+            sleep(120)
 
 # Create application server
 app = Flask(__name__)
