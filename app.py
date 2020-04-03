@@ -1,6 +1,10 @@
 from __future__ import unicode_literals #backward compatibility for python2
 # Module for os or system related stuff
-import os, sys
+import os, sys, threading
+# Module for HTTP GET
+import urllib.request
+# Module for delay
+from time import sleep
 # Module for building server
 from flask import Flask, request, abort
 from router.router import *
@@ -14,8 +18,20 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+
+# Prevent heroku from idling
+def keepAlive(second):
+    while 1:
+        with urllib.request.urlopen(os.getenv('HOST_URL', None)) as response:
+            html = response.read()
+            sleep(second)
+
 # Create application server
 app = Flask(__name__)
+
+# Start thread to ping server
+thread = threading.Thread(target=keepAlive, args=[60])
+thread.start()
 
 # Environment variabel
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None) 
