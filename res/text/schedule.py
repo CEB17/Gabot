@@ -15,8 +15,12 @@ class Schedule():
     def __init__(self, event, line_bot_api):
         self.event = event
         # Get user data
-        self.user = line_bot_api.get_profile(event.source.user_id)
-        self.line_bot_api = line_bot_api
+        try:
+            self.user = line_bot_api.get_profile(event.source.user_id)
+            self.line_bot_api = line_bot_api
+        except Exception as e:
+            print(e)
+            return
         # Set timezone
         region = pytz.timezone("Asia/Jakarta")
         # Get current time based on timezone
