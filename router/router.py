@@ -6,7 +6,7 @@ def router(app, parser, line_bot_api):
     def index():
         return controllers.index()
 
-    @app.route("/callback", methods=['POST'])
+    @app.route("/", methods=['POST'])
     def callback():
         return controllers.handler(app,parser,line_bot_api)
 
