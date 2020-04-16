@@ -30,8 +30,8 @@ def keepAlive():
 app = Flask(__name__)
 
 # Start thread to ping server
-thread = threading.Thread(target=keepAlive)
-thread.start()
+# thread = threading.Thread(target=keepAlive)
+# thread.start()
 
 # Environment variabel
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None) 
