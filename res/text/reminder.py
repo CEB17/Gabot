@@ -172,7 +172,11 @@ class Reminder():
         # Iterate data
         for i in data:
             # Get user data
-            user = self.line_bot_api.get_profile(i['userId'])
+            try:
+                user = self.line_bot_api.get_profile(i['userId'])
+            except Exception as e:
+                print(e)
+                continue
             # Show username
             str += f"From {user.display_name}\n"
             # Change datetime format
